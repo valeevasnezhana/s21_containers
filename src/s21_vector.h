@@ -26,9 +26,7 @@ namespace s21 {
         }
 
         explicit vector(size_type n):size_(n),capacity_(n),array_(new value_type[n]) {
-            if (array_ == nullptr) {
-                throw std::bad_alloc();
-            }
+
             for (size_type i = 0; i < n; ++i) {
                 array_[i] = T();
             }
@@ -40,13 +38,12 @@ namespace s21 {
             for(auto&& item:items) {
                 array_[i++]=std::move(item);
             }
-            std::cout<<"Constructor init_LIST param \n";
+
         }
 
 
         vector(const vector &other):size_(other.size_),capacity_(other.capacity_),array_(new value_type [capacity_]){
             std::copy(other.array_, other.array_+other.size_, array_);
-            std::cout<<"Constructor Copy \n";
         }
 
 
@@ -55,8 +52,6 @@ namespace s21 {
             other.size_ = 0;
             other.capacity_ = 0;
             other.array_ = nullptr;
-
-            std::cout<<"Constructor MOVE \n";
         }
 
 
@@ -75,8 +70,7 @@ namespace s21 {
             return *this;
         }
 
-        vector &operator=(vector &&other) noexcept
-                {
+        vector &operator=(vector &&other) noexcept{
             delete[] array_;
             size_ = other.size_;
             capacity_ = other.capacity_;
@@ -93,7 +87,6 @@ namespace s21 {
         }
 
 
-        //----------------------------------------------------------------------------------
         reference at(size_type pos) {
             if(pos>=size_ || size_ ==0) {
                 throw std::out_of_range("Out of bound exeption");
@@ -116,26 +109,26 @@ namespace s21 {
         iterator data() noexcept {
             return array_;
         }
-//        const_iterator data() const noexcept {
-//            return array_;
-//        }
+        const_iterator data() const noexcept {
+            return array_;
+        }
 
 
         iterator begin() noexcept{
             return array_;
         }
 
-//        const_iterator begin() const noexcept{
-//            return array_;
-//        }
+        const_iterator begin() const noexcept{
+            return array_;
+        }
 
         iterator end() noexcept{
             return array_+size_;
         }
 
-//        const_iterator end() const noexcept{
-//            return array_+size_;
-//        }
+        const_iterator end() const noexcept{
+            return array_+size_;
+        }
 
         bool empty() const noexcept{
             if(size_ == 0){
@@ -177,8 +170,6 @@ namespace s21 {
         }
 
 
-
-
         size_type capacity() {
             return capacity_;
         }
@@ -187,7 +178,7 @@ namespace s21 {
             if(size_<capacity_){
                 T* new_array = new value_type [size_];
                 for (unsigned int i = 0; i < size_; i++)
-                    new_array[i] = array_[i];
+                    new_array[i] = std::move(array_[i]);
                 capacity_ = size_;
                 delete[] array_;
                 array_ = new_array;

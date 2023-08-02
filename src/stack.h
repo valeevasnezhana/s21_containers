@@ -5,7 +5,7 @@
 #ifndef CONTAINERS_STACK_H
 #define CONTAINERS_STACK_H
 
-#include "list.h"
+#include "s21_list.h"
 
 template<typename T>
 class stack {
@@ -14,7 +14,6 @@ public:
     using reference = T&;
     using const_reference = const T&;
     using size_type = std::size_t;
-
 
 
    stack() {

@@ -123,8 +123,6 @@ public:
             ListConstIterator::operator--();
             return temp;
         }
-//    private:
-//        const BaseNode* node_;
     };
 
     using value_type = T;
