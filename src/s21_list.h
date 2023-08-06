@@ -7,7 +7,7 @@
 
 #include <cstddef>
 #include <iostream>
-
+namespace s21{
 template<typename T>
 class list {
 private:
@@ -20,15 +20,16 @@ private:
 
     struct Node : public BaseNode {
         T value;
+
         explicit Node(const T &data) : value(data) {}
     };
 
 public:
     class ListConstIterator {
-        friend list;
+        friend class list<T>;
     public:
         using value_type = T;
-        using reference = const T &;
+        using reference = const T&;
         using pointer = const T *;
         using difference_type = std::ptrdiff_t;
         using iterator_category = std::bidirectional_iterator_tag;
@@ -135,13 +136,14 @@ public:
 
     // List implementation
     list() : size_(0) {
-        InitFantomNode();
-    }
-
-    void InitFantomNode() {
         fantom_node_ = new BaseNode();
         fantom_node_->prev = fantom_node_;
         fantom_node_->next = fantom_node_;
+    }
+
+    void InitFantomNode() {
+            fantom_node_->prev = fantom_node_;
+            fantom_node_->next = fantom_node_;
     }
 
     list(size_type n) : list() {
@@ -182,8 +184,17 @@ public:
     }
 
     ~list() {
-        clear();
-        delete fantom_node_;
+        while (!empty()) {
+            if (fantom_node_->prev != fantom_node_ || fantom_node_->next != fantom_node_) {
+                Node *prev_tail = static_cast<Node *>(fantom_node_->prev);
+                Node *new_tail = static_cast<Node *>(prev_tail->prev);
+                new_tail->next = fantom_node_;
+                fantom_node_->prev = new_tail;
+                delete prev_tail;
+                --size_;
+            }
+        }
+            delete fantom_node_;
     }
 
 
@@ -199,7 +210,7 @@ public:
 //    }
 
     list &operator=(list &&other) noexcept {
-        while (fantom_node_ != fantom_node_) {
+        while (!empty()) {
             pop_back();
         }
         fantom_node_ = other.fantom_node_;
@@ -207,13 +218,14 @@ public:
         other.size_ = 0;
         other.fantom_node_ = nullptr;
         other.InitFantomNode();
+        return *this;
     }
 
-    const_reference front() {
+    const_reference front() const{
         return static_cast<Node *>(fantom_node_->next)->value;
     }
 
-    const_reference back() {
+    const_reference back() const{
         return static_cast<Node *>(fantom_node_->prev)->value;
     }
 
@@ -337,62 +349,54 @@ public:
         std::swap(size_, other.size_);
     }
 
-    void merge(list &other) {
-
+    void merge(list& other) {
         if (this == &other) {
             return;
         }
+
         if (other.empty()) {
             return;
         }
 
-        Node *tmp = static_cast<Node *>(fantom_node_->next);
-        Node *tmp_other = static_cast<Node *>(other.fantom_node_->next);
+        Node* this_node = static_cast<Node*>(fantom_node_->next);
+        Node* other_node = static_cast<Node*>(other.fantom_node_->next);
 
-        while (tmp != fantom_node_ && tmp_other != other.fantom_node_) {
-            if (tmp_other->value <= tmp->value) {
-                Node *cur_tmp_other = tmp_other;
-                tmp_other = static_cast<Node *>(tmp_other->next);
+        while (this_node != fantom_node_ && other_node != other.fantom_node_) {
+            if (other_node->value <= this_node->value) {
+                Node* cur_other_node = other_node;
+                other_node = static_cast<Node*>(other_node->next);
 
-
-                tmp->prev->next = cur_tmp_other;
-                cur_tmp_other->prev = tmp_other->prev;
-
-                cur_tmp_other->next = tmp;
-                tmp_other->prev = cur_tmp_other;
-
+                cur_other_node->prev = this_node->prev;
+                cur_other_node->next = this_node;
+                this_node->prev->next = cur_other_node;
+                this_node->prev = cur_other_node;
 
             } else {
-                tmp = static_cast<Node *>(tmp->next);
+                this_node = static_cast<Node*>(this_node->next);
             }
         }
 
+        if (other_node != other.fantom_node_) {
+            Node* this_last = static_cast<Node*>(fantom_node_->prev);
 
-        if (tmp_other != fantom_node_) {
-            Node *this_last = static_cast<Node *>(fantom_node_->prev);
-
-            this_last->next = tmp_other;
-            tmp_other->prev = this_last;
+            this_last->next = other_node;
+            other_node->prev = this_last;
             fantom_node_->prev = other.fantom_node_->prev;
             other.fantom_node_->prev->next = fantom_node_;
-            size_ += other.size_;
         }
-
 
         size_ += other.size_;
         other.size_ = 0;
-        other.fantom_node_ = nullptr;
         other.InitFantomNode();
     }
 
-
     void splice(const_iterator pos, list &other) {
         if (this == &other) {
-            return; // Нельзя перемещать элементы из списка в самого себя
+            return;
         }
 
         if (other.empty()) {
-            return; // Нечего перемещать, если other пустой
+            return;
         }
 
         // Узлы перед и после pos
@@ -413,7 +417,6 @@ public:
 
         size_ += other.size_;
         other.size_ = 0;
-
         other.InitFantomNode();
     }
 
@@ -447,32 +450,90 @@ public:
         // Сортируем список перед применением unique
         //sort();
 
-        Node* fantom = static_cast<Node*>(fantom_node_);
-        Node* current = static_cast<Node*>(fantom_node_->next);
+        Node *fantom = static_cast<Node *>(fantom_node_);
+        Node *current = static_cast<Node *>(fantom_node_->next);
 
         while (current->next != fantom) {
-            if (current->value == static_cast<Node*>(current->next)->value) {
+            if (current->value == static_cast<Node *>(current->next)->value) {
                 erase(iterator(current->next));
             } else {
-                current = static_cast<Node*>(current->next);
+                current = static_cast<Node *>(current->next);
             }
         }
     }
 
-//    iterator insert_many(const_iterator pos, Args&&... args){
-//
-//    }
-//
-//    void insert_many_back(Args&&... args){
-//
-//    }
-//
-//    void insert_many_front(Args&&... args) {
-//
-//    }
+    void sort() {
+        if (size_ <= 1) {
+            return; // Нечего сортировать, если список пустой или содержит только один элемент
+        }
+
+        // Разделение списка на две части
+        list<T> left_half;
+        list<T> right_half;
+        Node* cur_node = static_cast<Node*>(fantom_node_->next);
+        size_t middle = size_ / 2;
+        for (size_t i = 0; i < middle; ++i) {
+            left_half.push_back(cur_node->value);
+            cur_node = static_cast<Node*>(cur_node->next);
+        }
+        for (size_t i = middle; i < size_; ++i) {
+            right_half.push_back(cur_node->value);
+            cur_node = static_cast<Node*>(cur_node->next);
+        }
+
+        // Очистим текущий список перед сортировкой
+        clear();
+
+        // Рекурсивная сортировка каждой части
+        left_half.sort();
+        right_half.sort();
+
+        // Объединение отсортированных частей
+        merge(left_half);
+        merge(right_half);
+    }
+
+
+    template <typename... Args>
+    iterator insert_many(const_iterator pos, Args&&... args) {
+        Node* prev_node = const_cast<Node*>(static_cast<const Node*>(pos.node_->prev));
+        Node* next_node = const_cast<Node*>(static_cast<const Node*>(pos.node_));
+
+        // Создаем промежуточный массив инициализации с переданными аргументами
+        list <value_type> init_list{std::forward<Args>(args)...};
+        prev_node->next = init_list.fantom_node_->next;
+        next_node->prev = init_list.fantom_node_->prev;
+        init_list.fantom_node_->next->prev = prev_node;
+        init_list.fantom_node_->prev->next = next_node;
+
+        size_ += init_list.size();
+
+        init_list.size_ = 0;
+        init_list.InitFantomNode();
+
+        return iterator(prev_node->next);
+
+    }
+
+
+
+
+    template <typename... Args>
+    void insert_many_back(Args&&... args) {
+        list<value_type> init_list{std::forward<Args>(args)...};
+        splice(end(), init_list);
+    }
+
+    template <typename... Args>
+    void insert_many_front(Args&&... args) {
+        list<value_type> init_list{std::forward<Args>(args)...};
+        splice(begin(), init_list);
+    }
+
 private:
     size_type size_;
     BaseNode *fantom_node_;
 };
+}
 
 #endif //CPP2_S21_CONTAINERS_SRC_LIST_LIST_H_
