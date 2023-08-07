@@ -80,7 +80,6 @@ class AVLTree:
 
     def delete_node(self, root, key):
 
-        # Find the node to be deleted and remove it
         if not root:
             return root
         elif key < root.key:
@@ -94,7 +93,7 @@ class AVLTree:
             elif root.right is None:
                 temp = root.left
                 return temp
-            temp = root.right
+            temp = self.get_min_value_node(root.right)
             root.key = temp.key
             root.right = self.delete_node(root.right,
                                           temp.key)
@@ -169,25 +168,25 @@ class AVLTree:
 
     @staticmethod
     def find_levels(root, circle_nodes_: list[list[CircleNode]]):
-        q: deque[TreeNode] = deque()
-        q.append(root)
-        level = 0
-        while q:
-            for i in range(len(q)):
-                popping = q.popleft()
-                if popping:
-                    popping.level = level
-                    q.append(popping.left)
-                    if popping.left:
-                        popping.left.main_index = popping.main_index * 2 + 1
-                        popping.left.index_in_level = popping.left.main_index - int(2 ** (level + 1)) + 1
-                    q.append(popping.right)
-                    if popping.right:
-                        popping.right.main_index = popping.main_index * 2 + 2
-                        popping.right.index_in_level = popping.right.main_index - int(2 ** (level + 1)) + 1
-                    circle_nodes_[level][popping.index_in_level].visible = True
-                    circle_nodes_[level][popping.index_in_level].text = str(popping.key)
-            level += 1
+        if root:
+            q: deque[TreeNode] = deque()
+            root.main_index = 0
+            q.append(root)
+            level = 0
+            while q:
+                for i in range(len(q)):
+                    popping = q.popleft()
+                    if popping:
+                        popping.level = level
+                        q.append(popping.left)
+                        if popping.left:
+                            popping.left.main_index = popping.main_index * 2 + 1
+                        q.append(popping.right)
+                        if popping.right:
+                            popping.right.main_index = popping.main_index * 2 + 2
+                        circle_nodes_[level][popping.main_index - int(2 ** level) + 1].visible = True
+                        circle_nodes_[level][popping.main_index - int(2 ** level) + 1].text = str(popping.key)
+                level += 1
 
 
 my_tree = AVLTree()
@@ -195,7 +194,7 @@ root2 = None
 nums1 = [5, 10, 3, 7, 4, 9, 32, 22, 6, 2, 30, 300, 392, 0, 1, 8]
 for num in nums1:
     root2 = my_tree.insert_node(root2, num)
-my_tree.print_helper(root2)
+# my_tree.print_helper(root2)
 
 
 def draw_tree(root1):
@@ -206,10 +205,11 @@ def draw_tree(root1):
 
     my_tree.find_levels(root1, circle_nodes)
     distance_between_nodes = 5
-    for i, node in enumerate(circle_nodes[-1]):
-        circle_nodes[-1][i].x = 50 + i * (distance_between_nodes + node.size)
-        circle_nodes[-1][i].y = height - 200
-        # circle_nodes[-1][i].draw_node()
+    if circle_nodes and circle_nodes[-1]:
+        for i, node in enumerate(circle_nodes[-1]):
+            circle_nodes[-1][i].x = 50 + i * (distance_between_nodes + node.size)
+            circle_nodes[-1][i].y = height - 200
+            # circle_nodes[-1][i].draw_node()
 
     i = my_tree.get_height(root1) - 2
     while i >= 0:
@@ -242,6 +242,12 @@ draw_tree(root2)
 random.shuffle(nums1)
 ind = 0
 
+# for num in nums1:
+#     root2 = my_tree.delete_node(root2, num)
+#     print(num)
+
+print(nums1[ind])
+
 while True:
     dt = clock.tick(60) / 1000
     for event in pygame.event.get():
@@ -250,6 +256,9 @@ while True:
         # if event.type == pygame.MOUSEBUTTONDOWN:
         #     draw_tree(root2)
         if event.type == pygame.MOUSEBUTTONDOWN:
-            root2 = my_tree.delete_node(root2, nums1[ind])
+            if ind < len(nums1):
+                root2 = my_tree.delete_node(root2, nums1[ind])
+                ind += 1
             draw_tree(root2)
-            ind += 1
+            if ind < len(nums1):
+                print(nums1[ind])
