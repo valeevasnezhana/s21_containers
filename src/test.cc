@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <array>
+#include <list>
 #include "s21_containers.h"
 #include "s21_containersplus.h"
 
@@ -690,6 +691,648 @@ TEST(array_fill, TEST_53) {
     EXPECT_EQ(s21_arr_string[2], "21");
     EXPECT_EQ(s21_arr_string[3], "21");
 }
+
+TEST(list_construct, TEST_54) {
+  s21::list<int> s21_list_int;
+  s21::list<std::string> s21_list_string;
+
+  EXPECT_EQ(s21_list_int.size(), 0);
+  EXPECT_EQ(s21_list_string.size(), 0);
+}
+
+TEST(list_construct_two, TEST_55) {
+  s21::list<int> s21_list_int(5);
+  s21::list<std::string> s21_list_string(5);
+  EXPECT_EQ(s21_list_int.size(), 5);
+  EXPECT_EQ(s21_list_string.size(), 5);
+}
+
+TEST(list_construct_two_ex,TEST_55) {
+  EXPECT_THROW(s21::list<int> s21_list_int(0), std::out_of_range);
+  EXPECT_THROW(s21::list<std::string> s21_list_string(0), std::out_of_range);
+}
+
+TEST(list_construct_many, TEST_56) {
+  s21::list<int> s21_list_int{1, 2, 3, 4};
+
+  s21::list<std::string> s21_list_string{"I", "m", "Groot", "!"};
+
+  EXPECT_EQ(s21_list_int.size(), 4);
+  EXPECT_EQ(s21_list_int.front(), 1);
+
+  EXPECT_EQ(s21_list_string.size(), 4);
+  EXPECT_EQ(s21_list_string.front(), "I");
+}
+
+TEST(list_construct_copy,  TEST_57) {
+  s21::list<int> s21_list_int{1, 2, 3, 4};
+  s21::list<int> s21_list_res_int(s21_list_int);
+
+
+  s21::list<std::string> s21_list_string{"I", "m", "Groot", "!"};
+  s21::list<std::string> s21_list_res_string(s21_list_string);
+
+  EXPECT_EQ(s21_list_res_int.size(), 4);
+  EXPECT_EQ(s21_list_res_int.front(), 1);
+
+
+  EXPECT_EQ(s21_list_res_string.size(), 4);
+  EXPECT_EQ(s21_list_res_string.front(), "I");
+}
+
+TEST(list_copy_operator, TEST_58) {
+  s21::list<int> s21_list_int{1, 2, 3, 4};
+  s21::list<int> s21_list_res_int = s21_list_int;
+
+  s21::list<std::string> s21_list_string{"I", "m", "Groot", "!"};
+  s21::list<std::string> s21_list_res_string = s21_list_string;
+
+  EXPECT_EQ(s21_list_res_int.size(), 4);
+  EXPECT_EQ(s21_list_res_int.front(), 1);
+
+  EXPECT_EQ(s21_list_res_string.size(), 4);
+  EXPECT_EQ(s21_list_res_string.front(), "I");
+}
+
+TEST(list_copy_operator_zero, TEST_59) {
+  s21::list<int> s21_list_int;
+  s21::list<int> s21_list_res_int = s21_list_int;
+
+  s21::list<std::string> s21_list_string;
+  s21::list<std::string> s21_list_res_string = s21_list_string;
+
+  EXPECT_EQ(s21_list_res_int.size(), 0U);
+  EXPECT_EQ(s21_list_res_string.size(), 0U);
+}
+
+TEST(list_operator_move, TEST_60) {
+  s21::list<int> s21_list_int{1, 2, 3, 4};
+  s21::list<int> s21_list_res_int = std::move(s21_list_int);
+
+  s21::list<std::string> s21_list_string{"I", "m", "Groot", "!"};
+  s21::list<std::string> s21_list_res_string = std::move(s21_list_string);
+
+  EXPECT_EQ(s21_list_int.size(), 0);
+  EXPECT_EQ(s21_list_res_int.size(), 4);
+  EXPECT_EQ(s21_list_res_int.front(), 1);
+
+  EXPECT_EQ(s21_list_string.size(), 0);
+  EXPECT_EQ(s21_list_res_string.size(), 4);
+  EXPECT_EQ(s21_list_res_string.front(), "I");
+}
+
+TEST(list_construct_move, TEST_61) {
+  s21::list<int> s21_list_int{1, 2, 3, 4};
+  s21::list<int> s21_list_res_int;
+  s21_list_res_int = std::move(s21_list_int);
+
+
+  s21::list<std::string> s21_list_string{"I", "m", "Groot", "!"};
+  s21::list<std::string> s21_list_res_string;
+  s21_list_res_string = std::move(s21_list_string);
+
+  EXPECT_EQ(s21_list_int.size(), 0U);
+  EXPECT_EQ(s21_list_res_int.size(), 4U);
+  EXPECT_EQ(s21_list_res_int.front(), 1);
+
+
+  EXPECT_EQ(s21_list_string.size(), 0U);
+  EXPECT_EQ(s21_list_res_string.size(), 4U);
+  EXPECT_EQ(s21_list_res_string.front(), "I");
+}
+
+TEST(list_move, TEST_62) {
+  s21::list<int> a = {43, 43, 43, 5};
+  s21::list<int> b = {1};
+  a = std::move(b);
+  EXPECT_EQ(a.back(), 1);
+}
+
+TEST(list_max_size, TEST_62) {
+  size_t n = 1;
+  s21::list<int> list(n);
+    std::list<int> list_orig(n);
+
+
+EXPECT_EQ(list.max_size(),list_orig.max_size());
+}
+
+TEST(list_pop_front, TEST_62) {
+  s21::list<int> list = {1,2,3,4,5,6};
+  EXPECT_EQ(list.size(), 6);
+EXPECT_EQ(list.front(), 1);
+  list.pop_front();
+EXPECT_EQ(list.front(), 2);
+  list.pop_front();
+EXPECT_EQ(list.front(), 3);
+  list.pop_front();
+EXPECT_EQ(list.front(), 4);
+  EXPECT_EQ(list.size(),3);
+}
+
+TEST(list_pop_back, TEST_63) {
+  s21::list<int> list = {1,2,3,4,5,6};
+  EXPECT_EQ(list.size(), 6);
+EXPECT_EQ(list.back(), 6);
+  list.pop_back();
+EXPECT_EQ(list.back(),5);
+  list.pop_back();
+EXPECT_EQ(list.back(), 4);
+  list.pop_back();
+EXPECT_EQ(list.back(), 3);
+  EXPECT_EQ(list.size(),3);
+}
+
+
+TEST(list_end_fantom, TEST_64) {
+  std::list<int> orig_list = {};
+  s21::list<int> list = {};
+  auto orig_itr_end = orig_list.end();
+  auto itr_end = list.end();
+  EXPECT_EQ(*orig_itr_end, *itr_end);
+}
+
+TEST(list_end, TEST_65) {
+  std::list<int> orig_list;
+  s21::list<int> lst;
+  auto orig_itr = orig_list.end();
+  auto itr = lst.end();
+  EXPECT_EQ(*orig_itr, *itr);
+}
+
+TEST(list_push_front,  TEST_66) {
+  s21::list<int> s21_list_int = {1,2,3,4,5,6};
+  s21::list<std::string> s21_list_string{"I", "m", "Groot", "!"};
+
+  s21_list_int.push_front(7);
+  s21_list_string.push_front("7");
+
+  EXPECT_EQ(s21_list_int.size(), 7);
+  EXPECT_EQ(s21_list_int.front(), 7);
+
+  EXPECT_EQ(s21_list_string.size(), 5);
+  EXPECT_EQ(s21_list_string.front(), "7");
+}
+
+TEST(empty_list_push_front, TEST_67) {
+  s21::list<int> s21_list_int;
+  s21::list<std::string> s21_list_string;
+
+  s21_list_int.push_front(1);
+  s21_list_string.push_front("1");
+
+  EXPECT_EQ(s21_list_int.size(), 1);
+  EXPECT_EQ(s21_list_int.front(), 1);
+
+  EXPECT_EQ(s21_list_string.size(), 1);
+  EXPECT_EQ(s21_list_string.front(), "1");
+}
+
+TEST(one_arg_list_push_front, TEST_68) {
+  s21::list<int> s21_list_int{1};
+  s21::list<std::string> s21_list_string{"1"};
+
+  s21_list_int.push_front(1);
+  s21_list_string.push_front("1");
+
+  EXPECT_EQ(s21_list_int.size(), 2);
+  EXPECT_EQ(s21_list_int.front(), 1);
+
+  EXPECT_EQ(s21_list_string.size(), 2);
+  EXPECT_EQ(s21_list_string.front(), "1");
+}
+
+TEST(many_arg_list_push_front, TEST_69) {
+  s21::list<int> list = {1, 2, 3, 4, 5, 6, 7};
+  std::list<int> list_orig = {1, 2, 3, 4, 5, 6, 7};
+  list.push_front(20);
+  list_orig.push_front(20);
+  auto itr_orig = list_orig.begin();
+  for (auto itr = list.begin(); itr != list.end(); itr++) {
+    EXPECT_EQ(*itr, *itr_orig++);
+
+  }
+
+  s21::list<int> list_two;
+  std::list<int> list_orig_two;
+  list_two.push_front(21);
+  list_orig_two.push_front(21);
+  auto itr_orig_two = list_orig_two.begin();
+  for (auto itr_two = list_two.begin(); itr_two != list_two.end(); itr_two++) {
+    EXPECT_EQ(*itr_two, *itr_orig_two++);
+  }
+}
+
+TEST(list_push_back, TEST_71) {
+  s21::list<int> s21_list_int = {1,2,3,4,5,6};
+  s21::list<std::string> s21_list_string{"I", "m", "Groot", "!"};
+
+  s21_list_int.push_back(33);
+  s21_list_string.push_back("33");
+
+  EXPECT_EQ(s21_list_int.size(), 7);
+  EXPECT_EQ(s21_list_int.back(), 33);
+
+  EXPECT_EQ(s21_list_string.size(), 5);
+  EXPECT_EQ(s21_list_string.back(), "33");
+}
+
+TEST(zero_arg_list_push_back, TEST_72) {
+  s21::list<int> s21_list_int;
+  s21::list<std::string> s21_list_string;
+
+  s21_list_int.push_back(33);
+  s21_list_string.push_back("33");
+
+  EXPECT_EQ(s21_list_int.size(), 1);
+  EXPECT_EQ(s21_list_int.back(), 33);
+
+  EXPECT_EQ(s21_list_string.size(), 1);
+  EXPECT_EQ(s21_list_string.back(), "33");
+}
+
+TEST(one_arg_list_push_back, TEST_73) {
+  s21::list<int> s21_list_int{1};
+  s21::list<std::string> s21_list_string{"1"};
+
+  s21_list_int.push_back(33);
+  s21_list_string.push_back("33");
+
+  EXPECT_EQ(s21_list_int.size(), 2);
+  EXPECT_EQ(s21_list_int.back(), 33);
+
+  EXPECT_EQ(s21_list_string.size(), 2);
+  EXPECT_EQ(s21_list_string.back(), "33");
+}
+
+TEST(list_pop_front, TEST_74) {
+  s21::list<int> list = {1, 2, 3,4,5,6,7};
+  std::list<int> list_orig = {1, 2, 3,4,5,6,7};
+  list.pop_front();
+  list_orig.pop_front();
+  auto itr_orig = list_orig.begin();
+  for (auto itr = list.begin(); itr != list.end(); itr++) {
+    EXPECT_EQ(*itr, *itr_orig++);
+  }
+}
+
+TEST(list_pop_front, TEST_75) {
+  s21::list<int> s21_list_int{1, 2, 3, 4};
+  s21::list<std::string> s21_list_string{"I", "m", "Groot", "!"};
+
+  s21_list_int.pop_back();
+  s21_list_string.pop_back();
+
+  EXPECT_EQ(s21_list_int.size(), 3);
+  EXPECT_EQ(s21_list_int.back(), 3);
+  EXPECT_EQ(s21_list_string.size(), 3);
+  EXPECT_EQ(s21_list_string.back(), "Groot");
+}
+
+
+TEST(list_back, TEST_76) {
+  s21::list<int> s21_list_int{1, 2, 3, 4};  
+  s21::list<std::string> s21_list_string{"I", "m", "Groot", "!"};
+  EXPECT_EQ(s21_list_int.back(), 4);
+  EXPECT_EQ(s21_list_string.back(), "!");
+}
+
+TEST(list_swap, TEST_77) {
+  s21::list<int> s21_list_int{1, 2, 3, 4};  
+  s21::list<int> s21_list_res_int{12, 13};
+
+  s21::list<std::string> s21_list_string{"I", "m", "Groot", "!"};
+  s21::list<std::string> s21_list_res_string{"12", "13", "14", "15"};
+
+  s21_list_int.swap(s21_list_res_int);
+  s21_list_string.swap(s21_list_res_string);
+
+  EXPECT_EQ(s21_list_int.size(), 2U);
+  EXPECT_EQ(s21_list_int.front(), 12);
+  EXPECT_EQ(s21_list_res_int.size(), 4U);
+  EXPECT_EQ(s21_list_res_int.front(), 1);
+
+  EXPECT_EQ(s21_list_string.size(), 4U);
+  EXPECT_EQ(s21_list_string.front(), "12");
+  EXPECT_EQ(s21_list_res_string.size(), 4U);
+  EXPECT_EQ(s21_list_res_string.front(), "I");
+}
+
+TEST(list_swap, TEST_78) {
+  s21::list<int> s21_list_int{1, 2, 3, 4};  
+  s21::list<int> s21_list_res_int;
+
+  s21::list<std::string> s21_list_string{"I", "m", "Groot", "!"};
+  s21::list<std::string> s21_list_res_string;
+
+  s21_list_res_int.swap(s21_list_int);
+  s21_list_res_string.swap(s21_list_string);
+
+  EXPECT_EQ(s21_list_int.size(), 0);
+  EXPECT_EQ(s21_list_res_int.size(), 4);
+  EXPECT_EQ(s21_list_res_int.front(), 1);
+
+  EXPECT_EQ(s21_list_string.size(), 0);
+  EXPECT_EQ(s21_list_res_string.size(), 4);
+  EXPECT_EQ(s21_list_res_string.front(), "I");
+}
+
+TEST(zero_list_sort, TEST_79) {
+
+  s21::list<int> s21_list_int{4, 3, 2, 1};  
+  s21::list<std::string> s21_list_string{"I", "m", "Groot", "A"};
+
+  s21_list_int.sort();
+  s21_list_string.sort();
+
+  EXPECT_EQ(s21_list_int.front(), 1);
+  EXPECT_EQ(s21_list_string.front(), "A");
+}
+
+TEST(one_arg_list_sort, TEST_79) {
+  s21::list<int> s21_list_int{1};
+  s21::list<std::string> s21_list_string{"I"};
+
+  s21_list_int.sort();
+  s21_list_string.sort();
+
+  EXPECT_EQ(s21_list_int.front(), 1);
+  EXPECT_EQ(s21_list_string.front(), "I");
+}
+
+TEST(list_merge,  TEST_80) {
+  s21::list<int> s21_list_ref_int{1, 4, 8, 9};
+  s21::list<int> s21_list_res_int{12, 13};
+
+
+  s21::list<std::string> s21_list_ref_string{"Hello", ",", "world", "!"};
+  s21::list<std::string> s21_list_res_string{"12", "13", "14", "15"};
+
+  s21_list_res_int.merge(s21_list_ref_int);
+  s21_list_res_string.merge(s21_list_ref_string);
+
+  EXPECT_EQ(s21_list_ref_int.size(), 0);
+  EXPECT_EQ(s21_list_res_int.size(), 6);
+  EXPECT_EQ(s21_list_res_int.front(), 1);
+
+  EXPECT_EQ(s21_list_ref_string.size(), 0);
+  EXPECT_EQ(s21_list_res_string.size(), 8);
+  EXPECT_EQ(s21_list_res_string.front(), "12");
+}
+
+TEST(empty_list_merge, TEST_81) {
+  s21::list<int> s21_list_ref_int{1, 4, 8, 9};
+  s21::list<int> s21_list_res_int;
+
+  s21::list<std::string> s21_list_ref_string{"Hello", ",", "world", "!"};
+  s21::list<std::string> s21_list_res_string;
+
+  s21_list_res_int.merge(s21_list_ref_int);
+  s21_list_res_string.merge(s21_list_ref_string);
+
+  EXPECT_EQ(s21_list_ref_int.size(), 0);
+  EXPECT_EQ(s21_list_res_int.size(), 4);
+  EXPECT_EQ(s21_list_res_int.front(), 1);
+
+  EXPECT_EQ(s21_list_ref_string.size(), 0);
+  EXPECT_EQ(s21_list_res_string.size(), 4);
+  EXPECT_EQ(s21_list_res_string.front(), "Hello");
+}
+
+
+TEST(list_reverse, TEST_82) {
+  s21::list<int> s21_list_int{1, 2, 3, 4};
+  s21::list<std::string> s21_list_string{"Hello", ",", "world", "A"};
+
+  s21_list_int.reverse();
+  s21_list_string.reverse();
+
+  EXPECT_EQ(s21_list_int.front(), 4);
+  EXPECT_EQ(s21_list_string.front(), "A");
+}
+
+TEST(one_arg_list_reverse, TEST_83) {
+  s21::list<int> s21_list_int{1};
+  s21::list<std::string> s21_list_string{"Hello"};
+
+  s21_list_int.reverse();
+  s21_list_string.reverse();
+
+  EXPECT_EQ(s21_list_int.front(), 1);
+  EXPECT_EQ(s21_list_string.front(), "Hello");
+}
+
+TEST(list_unique,TEST_84) {
+  s21::list<int> s21_list_int{1, 1, 4, 4, 8, 8, 8, 9, 9, 9, 9, 9};
+  s21::list<std::string> s21_list_string{"Hello", ",",     "Hello", ",",
+                                         "world", ",",     "world", "!",
+                                         "!",     "world", "!"};
+
+  s21_list_int.unique();
+  s21_list_string.unique();
+
+  EXPECT_EQ(s21_list_int.size(), 4);
+  EXPECT_EQ(s21_list_string.size(), 4);
+}
+
+
+TEST(list_unique_two, TEST_85) {
+  s21::list<int> s21_list_int;
+  s21::list<std::string> s21_list_string;
+
+  s21_list_int.unique();
+  s21_list_string.unique();
+
+  EXPECT_EQ(s21_list_int.size(), 0);
+  EXPECT_EQ(s21_list_string.size(), 0);
+}
+
+TEST(list_size, TEST_86) {
+  s21::list<int> s21_list_int{1, 2, 3, 4};
+
+  EXPECT_EQ(s21_list_int.size(), 4);
+}
+
+TEST(size, TEST_87) {
+  s21::list<int> s21_list_int;
+  EXPECT_EQ(s21_list_int.size(), 0U);
+
+}
+
+
+TEST(list_empty, TEST_88) {
+  s21::list<int> s21_list_int{1, 2, 3, 4};
+  EXPECT_EQ(s21_list_int.empty(), 0);
+}
+
+
+// TEST(list_empty, TEST_89) {
+//   std::list<int> orig_list(5);
+//   s21::list<int> lst(5);
+//   auto orig_itr = orig_list.end();
+//   auto itr = lst.end();
+//   EXPECT_EQ(*orig_itr, *itr);
+// }
+
+TEST(list_insert,  TEST_90) {
+  s21::list<int> s21_list_int{1, 4, 8, 9};
+
+  auto it_int = s21_list_int.begin();
+  it_int = s21_list_int.insert(it_int, 13);
+  EXPECT_EQ(s21_list_int.front(), 13);
+  EXPECT_EQ(*(++s21_list_int.begin()), 1);
+
+}
+
+TEST(empty_list_insert,  TEST_91){
+  s21::list<std::string> s21_list_string;
+
+  auto it_string = s21_list_string.begin();
+  it_string = s21_list_string.insert(it_string, "HI");
+  EXPECT_EQ(s21_list_string.front(), "HI");
+}
+
+TEST(empty_list_insert,  TEST_92) {
+  s21::list<int> s21_list_int{1};
+  s21::list<std::string> s21_list_string{"1"};
+
+  auto it_int = s21_list_int.begin();
+  it_int = s21_list_int.insert(it_int, 13);
+  EXPECT_EQ(s21_list_int.front(), 13);
+
+  auto it_string = s21_list_string.begin();
+  it_string = s21_list_string.insert(it_string, "HI");
+  EXPECT_EQ(s21_list_string.front(), "HI");
+}
+
+
+
+TEST(list_splice,  TEST_93) {
+  s21::list<int> s21_list_ref_int{3, 5};
+  s21::list<int> s21_list_res_int{1, 4, 8, 9};
+
+  s21::list<std::string> s21_list_ref_string{"Hi"};
+  s21::list<std::string> s21_list_res_string{"Hello", ",", "world", "!"};
+
+  auto it_int = s21_list_res_int.begin();
+  s21_list_res_int.splice(it_int, s21_list_ref_int);
+  EXPECT_EQ(*(s21_list_res_int.begin()), 3);
+  EXPECT_EQ(*(++s21_list_res_int.begin()), 5);
+
+  auto it_string = s21_list_res_string.begin();
+  s21_list_res_string.splice(it_string, s21_list_ref_string);
+  EXPECT_EQ(*(s21_list_res_string.begin()), "Hi");
+}
+
+TEST(list_splice,  TEST_94) {
+  s21::list<int> s21_list_ref_int;
+  s21::list<int> s21_list_res_int{1, 4, 8, 9};
+
+  s21::list<std::string> s21_list_ref_string;
+  s21::list<std::string> s21_list_res_string{"Hello", ",", "world", "!"};
+
+  auto it_int = s21_list_res_int.begin();
+  s21_list_res_int.splice(it_int, s21_list_ref_int);
+  EXPECT_EQ(*(s21_list_res_int.begin()), 1);
+
+  auto it_string = s21_list_res_string.begin();
+  s21_list_res_string.splice(it_string, s21_list_ref_string);
+  EXPECT_EQ(*(s21_list_res_string.begin()), "Hello");
+}
+
+TEST(list_splice,  TEST_95) {
+  s21::list<int> s21_list_ref_int{1, 4, 8, 9};
+  s21::list<int> s21_list_res_int;
+
+  auto it_int = s21_list_res_int.begin();
+  s21_list_res_int.splice(it_int, s21_list_ref_int);
+  EXPECT_EQ(*(s21_list_res_int.begin()), 1);
+}
+
+TEST(list_insert_many_back,  TEST_96) {
+  s21::list<int> list = {1, 2, 3, 4, 5};
+  list.insert_many_back(6, 7, 8);
+  EXPECT_EQ(list.back(), 8);
+}
+
+TEST(list_insert_many_back, TEST_97) {
+  s21::list<int> list;
+  list.insert_many_back(4, 5, 6);
+  EXPECT_EQ(list.back(), 6);
+  EXPECT_EQ(list.front(), 4);
+}
+
+TEST(list_insert_many_front,  TEST_98) {
+  s21::list<int> list = {1, 2, 3, 4, 5};
+  list.insert_many_front(6, 7, 8);
+  EXPECT_EQ(list.front(), 6);
+}
+
+TEST(list_insert_many_front,  TEST_99) {
+  s21::list<int> list;
+  list.insert_many_front(4, 5, 6);
+  EXPECT_EQ(list.front(), 4);
+  EXPECT_EQ(list.back(), 6);
+}
+
+TEST(list_iterator,  TEST_100) {
+  s21::list<int> list = {1, 2, 3, 4};
+  std::list<int> list_org = {1, 2, 3, 4};
+  unsigned int n = list.size();
+  unsigned int n_orig = list_org.size();
+  EXPECT_EQ(n, n_orig);
+
+  auto itr = list.begin();
+  auto itr_orig = list_org.begin();
+  auto end = list.end();
+  auto end_orig = list_org.end();
+  while (itr != end && itr_orig != end_orig) {
+    EXPECT_EQ(*itr, *itr_orig);
+    itr++;
+    itr_orig++;
+  }
+}
+
+TEST(list_iterator,  TEST_101) {
+  s21::list<int> list = {1, 2, 3, 4};
+  std::list<int> list_org = {1, 2, 3, 4};
+  unsigned int n = list.size();
+  unsigned int n_orig = list_org.size();
+  EXPECT_EQ(n, n_orig);
+
+  auto itr = list.begin();
+  auto itr_orig = list_org.begin();
+  auto end = list.end();
+  auto end_orig = list_org.end();
+
+  while (itr != end && itr_orig != end_orig) {
+    EXPECT_EQ(*itr, *itr_orig);
+    itr--;
+    itr_orig--;
+  }
+}
+
+TEST(list_iterator,  TEST_102) {
+  s21::list<int> list = {1, 2, 3, 4};
+  auto itr = ++list.begin();
+  EXPECT_EQ(*itr, 2);
+}
+
+TEST(list_iterator,  TEST_103) {
+  s21::list<int> list = {1, 2, 3, 4};
+  auto itr = --list.end();
+    s21::list<int> list_org = {1, 2, 3, 4};
+  auto itr_org = --list_org.end();
+  EXPECT_EQ(*itr, *itr_org);
+}
+
+TEST(list_iterator,  TEST_104) {
+  s21::list<int> lol = {1, 2, 3, 4};
+  auto itr = lol.end();
+  --itr;
+  EXPECT_EQ(*itr, 4);
+}
+
 int main(int argc, char **argv) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

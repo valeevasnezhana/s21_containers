@@ -148,7 +148,7 @@ public:
 
     list(size_type n) : list() {
         if (n == 0) {
-            throw std::out_of_range("Index out of range");
+            throw std::out_of_range("Index out of range"); //можно сделат ьпо другому сразу выделить память для элементов
         }
         for (size_type i = 0; i < n; ++i) {
             push_back(T());
@@ -158,10 +158,10 @@ public:
     list(const list &other) : list() {
         BaseNode *node = other.fantom_node_->next;
         while (node != other.fantom_node_) {
-            push_back(node->data);
+            push_back(static_cast<Node*>(node)->value);
             node = node->next;
         }
-        //foreach
+        //foreach можно допилить
     }
 
 
@@ -173,14 +173,12 @@ public:
     }
 
     list(list &&other) noexcept {
-        if (this != &other) {
-
             size_ = other.size_;
             fantom_node_ = other.fantom_node_;
             other.size_ = 0;
-            other.fantom_node_ = nullptr;
-            other.InitFantomNode();
-        }
+            other.fantom_node_=nullptr;
+            // other.InitFantomNode();
+
     }
 
     ~list() {
@@ -217,7 +215,7 @@ public:
         size_ = other.size_;
         other.size_ = 0;
         other.fantom_node_ = nullptr;
-        other.InitFantomNode();
+        // other.InitFantomNode();
         return *this;
     }
 
@@ -237,13 +235,13 @@ public:
         return iterator(fantom_node_);
     }
 
-//    const_iterator cbegin() const {
-//        return const_iterator(fantom_node_->next);
-//    }
-//
-//    const_iterator cend() const {
-//        return const_iterator(fantom_node_);
-//    }
+   const_iterator begin() const {
+       return const_iterator(fantom_node_->next);
+   }
+
+   const_iterator end() const {
+       return const_iterator(fantom_node_);
+   }
 
     bool empty() const {
         return size_ == 0;
@@ -254,7 +252,7 @@ public:
     }
 
     size_type max_size() {
-        return std::numeric_limits<size_t>::max() / sizeof(Node);
+        return std::numeric_limits<size_t>::max() / sizeof(Node)/2;
     }
 
     void clear() {
@@ -448,7 +446,7 @@ public:
         }
 
         // Сортируем список перед применением unique
-        //sort();
+        sort();
 
         Node *fantom = static_cast<Node *>(fantom_node_);
         Node *current = static_cast<Node *>(fantom_node_->next);
