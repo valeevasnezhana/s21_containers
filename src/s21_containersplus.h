@@ -7,4 +7,4 @@
 
 #include "s21_array.h"
 
-#endif //CONTAINERS_S21_CONTAINERSPLUS_H
+#endif  // CONTAINERS_S21_CONTAINERSPLUS_H

@@ -7,4 +7,5 @@
 
 #include "s21_list.h"
 #include "s21_vector.h"
-#endif //CONTAINERS_S21_CONTAINERS_H
+#include "s21_stack.h"
+#endif  // CONTAINERS_S21_CONTAINERS_H

@@ -5,11 +5,13 @@
 #ifndef CPP2_S21_CONTAINERS_SRC_LIST_LIST_H_
 #define CPP2_S21_CONTAINERS_SRC_LIST_LIST_H_
 
-#include <cstddef>
+#include <limits>
 #include <iostream>
+
 namespace s21 {
 template <typename T>
 class list {
+    public: class ListIterator;
  private:
   struct BaseNode {
     BaseNode *prev;
@@ -30,20 +32,24 @@ class list {
 
    public:
     using value_type = T;
-    using reference = const T &;
-    using pointer = const T *;
+    using reference = T &;
+    using const_reference = const T&;
+    using const_pointer = const T *;
     using difference_type = std::ptrdiff_t;
     using iterator_category = std::bidirectional_iterator_tag;
 
-    ListConstIterator() : node_(nullptr) {}
+    ListConstIterator() : node_() {}
 
-    explicit ListConstIterator(const BaseNode *node) : node_(node) {}
-
-    reference operator*() const {
-      return static_cast<const Node *>(node_)->value;
+    explicit ListConstIterator(BaseNode *node) : node_(node) {}
+    ListConstIterator(ListIterator iter){
+        node_=iter.node_;
     }
 
-    pointer operator->() const {
+    const_reference operator*() const {
+      return static_cast<Node *>(node_)->value;
+    }
+
+    const_pointer operator->() const {
       return &(static_cast<const Node *>(node_)->value);
     }
 
@@ -78,52 +84,66 @@ class list {
     }
 
    private:
-    const BaseNode *node_;
+     BaseNode *node_;
   };
 
-  // Define iterator by inheriting from const_iterator
-  class ListIterator : public ListConstIterator {
-    //        friend list;
+  class ListIterator {
+    friend list;
    public:
     using value_type = T;
-    using reference = T &;
-    using pointer = T *;
+    using reference = T&;
+    using pointer = T*;
     using difference_type = std::ptrdiff_t;
     using iterator_category = std::bidirectional_iterator_tag;
 
-    ListIterator() : ListConstIterator(nullptr) {}
+    ListIterator() : node_() {}
 
-    explicit ListIterator(BaseNode *node) : ListConstIterator(node) {}
+    explicit ListIterator(BaseNode *node) : node_(node) {}
+    
+    ListIterator (ListConstIterator iter) {
+        node_=iter.node_;
+    }
 
     reference operator*() const {
-      return const_cast<reference>(ListConstIterator::operator*());
+      return static_cast<Node*>(node_)->value;
     }
 
     pointer operator->() const {
-      return const_cast<pointer>(ListConstIterator::operator->());
+      return &(static_cast<Node *>(node_)->value);
     }
 
-    ListIterator operator++() {
-      ListConstIterator::operator++();
+    ListIterator &operator++() {
+      node_ = node_->next;
       return *this;
     }
 
     ListIterator operator++(int) {
-      ListIterator temp = *this;
-      ListConstIterator::operator++();
+      ListConstIterator temp = *this;
+      node_ = node_->next;
       return temp;
     }
 
     ListIterator &operator--() {
-      ListConstIterator::operator--();
+      node_ = node_->prev;
       return *this;
     }
 
     ListIterator operator--(int) {
-      ListIterator temp = *this;
-      ListConstIterator::operator--();
+      ListConstIterator temp = *this;
+      node_ = node_->prev;
       return temp;
     }
+
+    bool operator==(const ListIterator &other) const {
+      return node_ == other.node_;
+    }
+
+    bool operator!=(const ListIterator &other) const {
+      return node_ != other.node_;
+    }
+
+   private:
+    BaseNode *node_;
   };
 
   using value_type = T;
