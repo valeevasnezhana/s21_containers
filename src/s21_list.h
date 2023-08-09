@@ -7,6 +7,7 @@
 
 #include <limits>
 #include <iostream>
+#include <initializer_list>
 
 namespace s21 {
 template <typename T>
@@ -153,7 +154,7 @@ class list {
   using const_iterator = ListConstIterator;
   using size_type = std::size_t;
 
-  // List implementation
+
   list() : size_(0) {
     fantom_node_ = new BaseNode();
     fantom_node_->prev = fantom_node_;
@@ -213,16 +214,17 @@ class list {
     delete fantom_node_;
   }
 
-  //    list& operator=(const list& other) {
-  //        if (this == &other) {
-  //            return *this;
-  //        }
-  //        clear();
-  //        for (const T& value : other) {
-  //            push_back(value);
-  //        }
-  //        return *this;
-  //    }
+     list& operator=(const list& other) {
+         if (this == &other) {
+             return *this;
+         }
+         clear();
+         InitFantomNode();
+         for (const T& value : other) {
+             push_back(value);
+         }
+         return *this;
+     }
 
   list &operator=(list &&other) noexcept {
     while (!empty()) {
@@ -319,15 +321,12 @@ class list {
   }
 
   void pop_back() {
-    if (fantom_node_->prev != fantom_node_ ||
-        fantom_node_->next != fantom_node_) {
       Node *prev_tail = static_cast<Node *>(fantom_node_->prev);
       Node *new_tail = static_cast<Node *>(prev_tail->prev);
       new_tail->next = fantom_node_;
       fantom_node_->prev = new_tail;
       delete prev_tail;
       --size_;
-    }
   }
 
   void push_front(const T &value) {
@@ -343,15 +342,13 @@ class list {
   }
 
   void pop_front() {
-    if (fantom_node_->prev != fantom_node_ ||
-        fantom_node_->next != fantom_node_) {
       Node *prev_head = static_cast<Node *>(fantom_node_->next);
       Node *new_head = static_cast<Node *>(prev_head->next);
       new_head->prev = fantom_node_;
       fantom_node_->next = new_head;
       delete prev_head;
       --size_;
-    }
+
   }
 
   void swap(list &other) {

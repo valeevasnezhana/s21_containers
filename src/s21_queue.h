@@ -2,8 +2,8 @@
 // Created by Tandra Ymir on 8/1/23.
 //
 
-#ifndef CONTAINERS_STACK_H
-#define CONTAINERS_STACK_H
+#ifndef CONTAINERS_QUEUE_H
+#define CONTAINERS_QUEUE_H
 
 #include "s21_list.h"
 #include "s21_vector.h"
@@ -11,7 +11,7 @@
 
 namespace s21 {
     template <typename T, class Container = s21::list<T>>
-    class stack {
+    class queue {
     public:
         using container_type = Container;
         using value_type = T;
@@ -19,32 +19,35 @@ namespace s21 {
         using const_reference = const T &;
         using size_type = std::size_t;
 
-        stack():head_() {}
+        queue():head_() {}
 
-        stack(std::initializer_list<value_type> const &items){
+        queue(std::initializer_list<value_type> const &items){
             for (value_type i : items) {
                 head_.push_back(i);
             }
         }
 
-        stack(const stack &other) : head_(other.head_) {}
+        queue(const queue &other) : head_(other.head_) {}
 
-        stack(stack &&other) : head_(std::move(other.head_)){}
+        queue(queue &&other) : head_(std::move(other.head_)){}
 
-        ~stack() {}
+        ~queue() {}
 
-        stack &operator=(stack &&other){
+        queue &operator=(queue &&other) noexcept{
             head_ = std::move(other.head_);
             return *this;
         }
 
-        stack &operator=(const stack &other) {
+        queue &operator=(const queue &other) {
             head_ = other.head_;
             return *this;
         }
 
 
-        const_reference top(){
+        const_reference front(){
+            return head_.front();
+        }
+        const_reference back(){
             return head_.back();
         }
 
@@ -61,10 +64,10 @@ namespace s21 {
         }
 
         void pop() {
-            head_.pop_back();
+            head_.pop_front();
         }
 
-        void swap(stack &other) {
+        void swap(queue &other) {
             head_.swap(other.head_);
         }
 
@@ -72,4 +75,4 @@ namespace s21 {
         container_type head_;
     };
 }  // namespace s21
-#endif  // CONTAINERS_STACK_H
+#endif  // CONTAINERS_QUEUE_H
