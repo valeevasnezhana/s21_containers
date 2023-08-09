@@ -5,8 +5,8 @@
 #ifndef CONTAINERS_STACK_H
 #define CONTAINERS_STACK_H
 
-#include "s21_list.h"
-#include "s21_vector.h"
+// #include "s21_list.h"
+// #include "s21_vector.h"
 
 
 namespace s21 {
