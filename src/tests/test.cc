@@ -838,21 +838,21 @@ EXPECT_EQ(list.back(), 3);
 }
 
 
-// TEST(list_end_fantom, TEST_64) {
-//   std::list<int> orig_list = {};
-//   s21::list<int> list = {};
-//   auto orig_itr_end = orig_list.end();
-//   auto itr_end = list.end();
-//   EXPECT_EQ(*orig_itr_end, *itr_end);
-// }
+TEST(list_end_fantom, TEST_64) {
+  std::list<int> orig_list = {};
+  s21::list<int> list = {};
+  auto orig_itr_end = orig_list.end();
+  auto itr_end = list.end();
+  EXPECT_EQ(*orig_itr_end, *itr_end);
+}
 
-// TEST(list_end, TEST_65) {
-//   std::list<int> orig_list;
-//   s21::list<int> lst;
-//   auto orig_itr = orig_list.end();
-//   auto itr = lst.end();
-//   EXPECT_EQ(*orig_itr, *itr);
-// }
+TEST(list_end, TEST_65) {
+  std::list<int> orig_list;
+  s21::list<int> lst;
+  auto orig_itr = orig_list.end();
+  auto itr = lst.end();
+  EXPECT_EQ(*orig_itr, *itr);
+}
 
 TEST(list_push_front,  TEST_66) {
   s21::list<int> s21_list_int{1,2,3,4,5,6};

@@ -178,21 +178,21 @@ class vector {
     std::swap(capacity_, other.capacity_);
   }
 
-    template <typename... Args>
-    iterator insert_many(const_iterator pos, Args&&... args) {
-        size_type num_elems = sizeof...(Args);
-        size_type insert_pos = pos - array_;
-        if (size_ + num_elems >= capacity_) {
-            reserve(size_ + num_elems);
-        }
-        for (size_type i = size_ - 1; i >= insert_pos; --i) {
-            array_[i + num_elems] = std::move(array_[i]);
-        }
-        ((array_[insert_pos++] = std::forward<Args>(args)), ...);
-        size_ += num_elems;
-
-        return array_ + insert_pos;
+  template <typename... Args>
+  iterator insert_many(const_iterator pos, Args &&...args) {
+    size_type num_elems = sizeof...(Args);
+    size_type insert_pos = pos - array_;
+    if (size_ + num_elems >= capacity_) {
+      reserve(size_ + num_elems);
     }
+    for (size_type i = size_ - 1; i >= insert_pos; --i) {
+      array_[i + num_elems] = std::move(array_[i]);
+    }
+    ((array_[insert_pos++] = std::forward<Args>(args)), ...);
+    size_ += num_elems;
+
+    return array_ + insert_pos;
+  }
 
   template <typename... Args>
   void insert_many_back(Args &&...args) {
@@ -211,4 +211,4 @@ class vector {
   T *array_;
 };
 }  // namespace s21
-#endif  //CPP2_S21_CONTAINERS_SRC_S21_VECTOR_H_
+#endif  // CPP2_S21_CONTAINERS_SRC_S21_VECTOR_H_

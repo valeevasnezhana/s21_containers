@@ -21,7 +21,8 @@ class array {
 
   constexpr array() : size_(N) {}
 
-  constexpr explicit array(std::initializer_list<value_type> const &items) : array() {
+  constexpr explicit array(std::initializer_list<value_type> const &items)
+      : array() {
     size_type i = 0;
     for (auto &&item : items) {
       array_[i++] = std::move(item);
@@ -39,7 +40,6 @@ class array {
   ~array() {}
 
   array operator=(array &&a) noexcept {
-
     for (size_type i = 0; i < size_; ++i) {
       array_[i] = std::move(a.array_[i]);
     }
