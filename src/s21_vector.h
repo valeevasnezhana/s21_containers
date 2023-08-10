@@ -30,7 +30,7 @@ class vector {
     }
   }
 
-  vector(std::initializer_list<value_type> const &items)
+  explicit vector(std::initializer_list<value_type> const &items)
       : vector(items.size()) {
     size_type i = 0;
     for (auto &&item : items) {
@@ -133,10 +133,10 @@ class vector {
       reserve(capacity_ == 0 ? 1 : capacity_ * 2);
     }
     array_[size_] = value;
-    size_++;
+    ++size_;
   }
 
-  void pop_back() { size_--; }
+  void pop_back() { --size_; }
 
   size_type capacity() { return capacity_; }
 
@@ -166,10 +166,10 @@ class vector {
 
   void erase(iterator pos) {
     size_type del = pos - begin();
-    for (; del < size_ - 1; del++) {
+    for (; del < size_ - 1; ++del) {
       array_[del] = array_[del + 1];
     }
-    size_--;
+    --size_;
   }
 
   void swap(vector &other) {

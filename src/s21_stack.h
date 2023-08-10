@@ -21,7 +21,7 @@ namespace s21 {
 
         stack():head_() {}
 
-        stack(std::initializer_list<value_type> const &items){
+        explicit stack(std::initializer_list<value_type> const &items){
             for (value_type i : items) {
                 head_.push_back(i);
             }

@@ -21,7 +21,7 @@ class array {
 
   constexpr array() : size_(N) {}
 
-  constexpr array(std::initializer_list<value_type> const &items) : array() {
+  constexpr explicit array(std::initializer_list<value_type> const &items) : array() {
     size_type i = 0;
     for (auto &&item : items) {
       array_[i++] = std::move(item);

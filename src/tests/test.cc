@@ -796,8 +796,8 @@ TEST(list_construct_move, TEST_61) {
 }
 
 TEST(list_move, TEST_62) {
-  s21::list<int> a = {43, 43, 43, 5};
-  s21::list<int> b = {1};
+  s21::list<int> a{43, 43, 43, 5};
+  s21::list<int> b{1};
   a = std::move(b);
   EXPECT_EQ(a.back(), 1);
 }
@@ -812,7 +812,7 @@ EXPECT_EQ(list.max_size(),list_orig.max_size());
 }
 
 TEST(list_pop_front, TEST_62) {
-  s21::list<int> list = {1,2,3,4,5,6};
+  s21::list<int> list{1,2,3,4,5,6};
   EXPECT_EQ(list.size(), 6);
 EXPECT_EQ(list.front(), 1);
   list.pop_front();
@@ -825,7 +825,7 @@ EXPECT_EQ(list.front(), 4);
 }
 
 TEST(list_pop_back, TEST_63) {
-  s21::list<int> list = {1,2,3,4,5,6};
+  s21::list<int> list{1,2,3,4,5,6};
   EXPECT_EQ(list.size(), 6);
 EXPECT_EQ(list.back(), 6);
   list.pop_back();
@@ -855,7 +855,7 @@ EXPECT_EQ(list.back(), 3);
 // }
 
 TEST(list_push_front,  TEST_66) {
-  s21::list<int> s21_list_int = {1,2,3,4,5,6};
+  s21::list<int> s21_list_int{1,2,3,4,5,6};
   s21::list<std::string> s21_list_string{"I", "m", "Groot", "!"};
 
   s21_list_int.push_front(7);
@@ -897,8 +897,8 @@ TEST(one_arg_list_push_front, TEST_68) {
 }
 
 TEST(many_arg_list_push_front, TEST_69) {
-  s21::list<int> list = {1, 2, 3, 4, 5, 6, 7};
-  std::list<int> list_orig = {1, 2, 3, 4, 5, 6, 7};
+  s21::list<int> list{1, 2, 3, 4, 5, 6, 7};
+  std::list<int> list_orig{1, 2, 3, 4, 5, 6, 7};
   list.push_front(20);
   list_orig.push_front(20);
   auto itr_orig = list_orig.begin();
@@ -918,7 +918,7 @@ TEST(many_arg_list_push_front, TEST_69) {
 }
 
 TEST(list_push_back, TEST_71) {
-  s21::list<int> s21_list_int = {1,2,3,4,5,6};
+  s21::list<int> s21_list_int{1,2,3,4,5,6};
   s21::list<std::string> s21_list_string{"I", "m", "Groot", "!"};
 
   s21_list_int.push_back(33);
@@ -960,7 +960,7 @@ TEST(one_arg_list_push_back, TEST_73) {
 }
 
 TEST(list_pop_front, TEST_74) {
-  s21::list<int> list = {1, 2, 3,4,5,6,7};
+  s21::list<int> list{1, 2, 3,4,5,6,7};
   std::list<int> list_orig = {1, 2, 3,4,5,6,7};
   list.pop_front();
   list_orig.pop_front();
@@ -1244,7 +1244,7 @@ TEST(list_splice,  TEST_95) {
 }
 
 TEST(list_insert_many_back,  TEST_96) {
-  s21::list<int> list = {1, 2, 3, 4, 5};
+  s21::list<int> list{1, 2, 3, 4, 5};
   list.insert_many_back(6, 7, 8);
   EXPECT_EQ(list.back(), 8);
 }
@@ -1257,7 +1257,7 @@ TEST(list_insert_many_back, TEST_97) {
 }
 
 TEST(list_insert_many_front,  TEST_98) {
-  s21::list<int> list = {1, 2, 3, 4, 5};
+  s21::list<int> list{1, 2, 3, 4, 5};
   list.insert_many_front(6, 7, 8);
   EXPECT_EQ(list.front(), 6);
 }
@@ -1270,7 +1270,7 @@ TEST(list_insert_many_front,  TEST_99) {
 }
 
 TEST(list_iterator,  TEST_100) {
-  s21::list<int> list = {1, 2, 3, 4};
+  s21::list<int> list{1, 2, 3, 4};
   std::list<int> list_org = {1, 2, 3, 4};
   unsigned int n = list.size();
   unsigned int n_orig = list_org.size();
@@ -1288,7 +1288,7 @@ TEST(list_iterator,  TEST_100) {
 }
 
 TEST(list_iterator,  TEST_101) {
-  s21::list<int> list = {1, 2, 3, 4};
+  s21::list<int> list{1, 2, 3, 4};
   std::list<int> list_org = {1, 2, 3, 4};
   unsigned int n = list.size();
   unsigned int n_orig = list_org.size();
@@ -1307,21 +1307,21 @@ TEST(list_iterator,  TEST_101) {
 }
 
 TEST(list_iterator,  TEST_102) {
-  s21::list<int> list = {1, 2, 3, 4};
+  s21::list<int> list{1, 2, 3, 4};
   auto itr = ++list.begin();
   EXPECT_EQ(*itr, 2);
 }
 
 TEST(list_iterator,  TEST_103) {
-  s21::list<int> list = {1, 2, 3, 4};
+  s21::list<int> list{1, 2, 3, 4};
   auto itr = --list.end();
-    s21::list<int> list_org = {1, 2, 3, 4};
+    s21::list<int> list_org{1, 2, 3, 4};
   auto itr_org = --list_org.end();
   EXPECT_EQ(*itr, *itr_org);
 }
 
 TEST(list_iterator,  TEST_104) {
-  s21::list<int> list = {1, 2, 3, 4};
+  s21::list<int> list{1, 2, 3, 4};
   auto itr = list.end();
   --itr;
   EXPECT_EQ(*itr, 4);
@@ -1633,8 +1633,8 @@ TEST(queue_construct_move, TEST_138) {
 }
 
 TEST(queue_move, TEST_139) {
-  s21::queue<int> a = {43, 43, 43, 5};
-  s21::queue<int> b = {1};
+  s21::queue<int> a{43, 43, 43, 5};
+  s21::queue<int> b{1};
   a = std::move(b);
   EXPECT_EQ(a.back(), 1);
 }

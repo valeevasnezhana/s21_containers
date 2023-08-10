@@ -21,7 +21,7 @@ namespace s21 {
 
         queue():head_() {}
 
-        queue(std::initializer_list<value_type> const &items){
+        explicit queue(std::initializer_list<value_type> const &items){
             for (value_type i : items) {
                 head_.push_back(i);
             }

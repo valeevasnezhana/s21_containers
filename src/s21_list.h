@@ -12,11 +12,20 @@
 namespace s21 {
     template <typename T>
     class list {
-    public: 
-    class ListIterator;
+    public: class ListIterator;
     private:
-    struct BaseNode;
-    struct Node;
+        struct BaseNode {
+            BaseNode *prev;
+            BaseNode *next;
+
+            BaseNode() : prev(nullptr), next(nullptr) {}
+        };
+
+        struct Node : public BaseNode {
+            T value;
+
+            explicit Node(const T &data) : value(data) {}
+        };
 
     public:
         class ListConstIterator {
@@ -160,7 +169,7 @@ namespace s21 {
             }
         }
 
-        list(std::initializer_list<value_type> const &items) noexcept : list() {
+        explicit list(std::initializer_list<value_type> const &items) noexcept : list() {
             for (const_reference value : items) {
                 push_back(value);
             }
@@ -254,7 +263,7 @@ namespace s21 {
             next_node->prev = insert_node;
             insert_node->next = next_node;
 
-            size_++;
+            ++size_;
             return iterator(insert_node);
         }
 
@@ -270,7 +279,7 @@ namespace s21 {
             prev_node->next = next_node;
             next_node->prev = prev_node;
             delete pos.node_;
-            size_--;
+            --size_;
         }
 
         void push_back(const_reference value) {
@@ -484,21 +493,6 @@ namespace s21 {
             list init_list{std::forward<Args>(args)...};
             splice(begin(), init_list);
         }
-
-    private:
-        struct BaseNode {
-            BaseNode *prev;
-            BaseNode *next;
-
-            BaseNode() : prev(nullptr), next(nullptr) {}
-        };
-
-        struct Node : public BaseNode {
-            T value;
-
-            explicit Node(const T &data) : value(data) {}
-        };
-
 
     private:
         void ValidFantomNode(){
