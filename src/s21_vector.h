@@ -90,9 +90,9 @@ class vector {
 
   reference operator[](size_type pos) { return *(array_ + pos); }
 
-  const_reference front() { return *array_; }
+  const_reference front() const { return *array_; }
 
-  const_reference back() { return *(array_ + size_ - 1); }
+  const_reference back() const { return *(array_ + size_ - 1); }
 
   iterator data() noexcept { return array_; }
   const_iterator data() const noexcept { return array_; }

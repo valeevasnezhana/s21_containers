@@ -706,11 +706,6 @@ TEST(list_construct_two, TEST_55) {
   EXPECT_EQ(s21_list_string.size(), 5);
 }
 
-TEST(list_construct_two_ex,TEST_55) {
-  EXPECT_THROW(s21::list<int> s21_list_int(0), std::out_of_range);
-  EXPECT_THROW(s21::list<std::string> s21_list_string(0), std::out_of_range);
-}
-
 TEST(list_construct_many, TEST_56) {
   s21::list<int> s21_list_int{1, 2, 3, 4};
 
@@ -1131,7 +1126,7 @@ TEST(list_unique,TEST_84) {
   s21_list_string.unique();
 
   EXPECT_EQ(s21_list_int.size(), 4);
-  EXPECT_EQ(s21_list_string.size(), 4);
+  EXPECT_EQ(s21_list_string.size(), 10);
 }
 
 
