@@ -206,16 +206,18 @@ class list {
     return *this;
   }
 
-  list &operator=(list &&other) noexcept {
-    while (!empty()) {
-      pop_back();
-    }
-    fantom_node_ = other.fantom_node_;
-    size_ = other.size_;
-    other.size_ = 0;
-    other.fantom_node_ = nullptr;
-    return *this;
-  }
+        list &operator=(list &&other) noexcept {
+            while (!empty()) {
+                pop_back();
+            }
+            delete fantom_node_;
+            fantom_node_ = std::move(other.fantom_node_);
+            size_ = other.size_;
+            other.size_ = 0;
+            other.fantom_node_=nullptr;
+            return *this;
+        }
+
 
   const_reference front() const {
     return static_cast<Node *>(fantom_node_->next)->value;
@@ -294,17 +296,17 @@ class list {
     --size_;
   }
 
-  void push_front(const_reference value) {
-    Node *new_node = new Node(value);
-    Node *next_head = static_cast<Node *>(fantom_node_->next);
-    new_node->prev = next_head;
-    new_node->next = next_head;
+    void push_front(const_reference value_) {
+            Node *new_node = new Node(value_);
 
-    next_head->prev = new_node;
-    fantom_node_->next = new_node;
+            fantom_node_->next->prev = new_node;
+            new_node->next=fantom_node_;
+            fantom_node_->next=new_node;
+            new_node->prev=fantom_node_;
+            
+            ++size_;
+        }
 
-    ++size_;
-  }
 
   void pop_front() {
     Node *prev_head = static_cast<Node *>(fantom_node_->next);
@@ -357,7 +359,6 @@ class list {
 
     size_ += other.size_;
     other.size_ = 0;
-    other.fantom_node_ = nullptr;
   }
 
   void splice(const_iterator pos, list &other) {
@@ -386,7 +387,6 @@ class list {
 
     size_ += other.size_;
     other.size_ = 0;
-    other.fantom_node_ = nullptr;
   }
 
   void reverse() noexcept {

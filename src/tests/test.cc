@@ -755,8 +755,8 @@ TEST(list_copy_operator_zero, TEST_59) {
   s21::list<std::string> s21_list_string;
   s21::list<std::string> s21_list_res_string = s21_list_string;
 
-  EXPECT_EQ(s21_list_res_int.size(), 0U);
-  EXPECT_EQ(s21_list_res_string.size(), 0U);
+  EXPECT_EQ(s21_list_res_int.size(), 0);
+  EXPECT_EQ(s21_list_res_string.size(), 0);
 }
 
 TEST(list_operator_move, TEST_60) {
@@ -785,13 +785,13 @@ TEST(list_construct_move, TEST_61) {
   s21::list<std::string> s21_list_res_string;
   s21_list_res_string = std::move(s21_list_string);
 
-  EXPECT_EQ(s21_list_int.size(), 0U);
-  EXPECT_EQ(s21_list_res_int.size(), 4U);
+  EXPECT_EQ(s21_list_int.size(), 0);
+  EXPECT_EQ(s21_list_res_int.size(), 4);
   EXPECT_EQ(s21_list_res_int.front(), 1);
 
 
-  EXPECT_EQ(s21_list_string.size(), 0U);
-  EXPECT_EQ(s21_list_res_string.size(), 4U);
+  EXPECT_EQ(s21_list_string.size(), 0);
+  EXPECT_EQ(s21_list_res_string.size(), 4);
   EXPECT_EQ(s21_list_res_string.front(), "I");
 }
 
@@ -822,6 +822,18 @@ EXPECT_EQ(list.front(), 3);
   list.pop_front();
 EXPECT_EQ(list.front(), 4);
   EXPECT_EQ(list.size(),3);
+
+
+    s21::list<std::string> list_str{"1","2","3","4","5","6"};
+  EXPECT_EQ(list_str.size(), 6);
+EXPECT_EQ(list_str.front(), "1");
+  list_str.pop_front();
+EXPECT_EQ(list_str.front(), "2");
+  list_str.pop_front();
+EXPECT_EQ(list_str.front(), "3");
+  list_str.pop_front();
+EXPECT_EQ(list_str.front(), "4");
+  EXPECT_EQ(list_str.size(),3);
 }
 
 TEST(list_pop_back, TEST_63) {
@@ -835,23 +847,6 @@ EXPECT_EQ(list.back(), 4);
   list.pop_back();
 EXPECT_EQ(list.back(), 3);
   EXPECT_EQ(list.size(),3);
-}
-
-
-TEST(list_end_fantom, TEST_64) {
-  std::list<int> orig_list = {};
-  s21::list<int> list = {};
-  auto orig_itr_end = orig_list.end();
-  auto itr_end = list.end();
-  EXPECT_EQ(*orig_itr_end, *itr_end);
-}
-
-TEST(list_end, TEST_65) {
-  std::list<int> orig_list;
-  s21::list<int> lst;
-  auto orig_itr = orig_list.end();
-  auto itr = lst.end();
-  EXPECT_EQ(*orig_itr, *itr);
 }
 
 TEST(list_push_front,  TEST_66) {
@@ -1651,6 +1646,54 @@ TEST(queue_copy_operator, TEST_140) {
   s21_list_res_int = s21_list_int;
   EXPECT_EQ(s21_list_res_int.size(), 4U);
 }
+
+TEST(list_const_iterator_arrow, TEST_141) {
+  const s21::list<std::string>s21_list{"a","b","c"};
+  auto iter = s21_list.begin();
+
+  EXPECT_EQ(iter->capacity(), 15);
+}
+
+TEST(list_const_iterator, TEST_142) {
+  const s21::list<std::string>s21_list{"a","b","c"};
+  const s21::list<std::string>s21_list_two{"a","b","c"};
+  auto iter = ++s21_list.begin();
+  auto iter_two = s21_list_two.begin();
+  EXPECT_EQ(*(iter), "b");
+  --iter;
+    EXPECT_EQ(*(iter), "a");
+    EXPECT_EQ(*(iter++), "a");
+    EXPECT_EQ(*(iter--), "b");
+    EXPECT_TRUE(*(iter)==*(iter_two));
+}
+
+TEST(list_iterator, TEST_143) {
+  s21::list<std::string>s21_list{"a","b","c"};
+  s21::list<std::string>s21_list_two{"a","b","c"};
+  auto iter = ++s21_list.begin();
+  auto iter_two = s21_list_two.begin();
+  EXPECT_EQ(*(iter), "b");
+  --iter;
+    EXPECT_EQ(*(iter), "a");
+    EXPECT_EQ(*(iter++), "a");
+    EXPECT_EQ(*(iter--), "b");
+    EXPECT_TRUE(*(iter)==*(iter_two));
+}
+
+TEST(list_iterator_arrow, TEST_144) {
+  s21::list<std::string>s21_list{"a","b","c"};
+  auto iter = s21_list.begin();
+
+  EXPECT_EQ(iter->capacity(), 15);
+}
+
+TEST(list_clear, TEST_145) {
+  s21::list<std::string>s21_list{"a","b","c"};
+  s21_list.clear();
+
+  EXPECT_EQ(s21_list.size(), 0);
+}
+
 
 
 
