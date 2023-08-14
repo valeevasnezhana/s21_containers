@@ -16,18 +16,7 @@ class list {
   class ListIterator;
 
  private:
-  struct BaseNode {
-    BaseNode *prev;
-    BaseNode *next;
-
-    BaseNode() : prev(nullptr), next(nullptr) {}
-  };
-
-  struct Node : public BaseNode {
-    T value;
-
-    explicit Node(const T &data) : value(data) {}
-  };
+  struct Node;
 
  public:
   class ListConstIterator {
@@ -43,36 +32,32 @@ class list {
 
     ListConstIterator() : node_() {}
 
-    explicit ListConstIterator(BaseNode *node) : node_(node) {}
+    explicit ListConstIterator(Node *node) : node_(node) {}
     ListConstIterator(ListIterator iter) { node_ = iter.node_; }
 
-    const_reference operator*() const {
-      return static_cast<Node *>(node_)->value;
-    }
+    const_reference operator*() const { return node_->value_; }
 
-    const_pointer operator->() const {
-      return &(static_cast<const Node *>(node_)->value);
-    }
+    const_pointer operator->() const { return &node_->value_; }
 
     ListConstIterator &operator++() {
-      node_ = node_->next;
+      node_ = node_->next_;
       return *this;
     }
 
     ListConstIterator operator++(int) {
       ListConstIterator temp(*this);
-      node_ = node_->next;
+      node_ = node_->next_;
       return temp;
     }
 
     ListConstIterator &operator--() {
-      node_ = node_->prev;
+      node_ = node_->prev_;
       return *this;
     }
 
     ListConstIterator operator--(int) {
       ListConstIterator temp(*this);
-      node_ = node_->prev;
+      node_ = node_->prev_;
       return temp;
     }
 
@@ -85,7 +70,7 @@ class list {
     }
 
    private:
-    BaseNode *node_;
+    Node *node_;
   };
 
   class ListIterator {
@@ -100,33 +85,33 @@ class list {
 
     ListIterator() : node_() {}
 
-    explicit ListIterator(BaseNode *node) : node_(node) {}
+    explicit ListIterator(Node *node) : node_(node) {}
 
     ListIterator(ListConstIterator iter) { node_ = iter.node_; }
 
-    reference operator*() const { return static_cast<Node *>(node_)->value; }
+    reference operator*() const { return node_->value_; }
 
-    pointer operator->() const { return &(static_cast<Node *>(node_)->value); }
+    pointer operator->() const { return &node_->value_; }
 
     ListIterator &operator++() {
-      node_ = node_->next;
+      node_ = node_->next_;
       return *this;
     }
 
     ListIterator operator++(int) {
       ListIterator temp(*this);
-      node_ = node_->next;
+      node_ = node_->next_;
       return temp;
     }
 
     ListIterator &operator--() {
-      node_ = node_->prev;
+      node_ = node_->prev_;
       return *this;
     }
 
     ListIterator operator--(int) {
       ListIterator temp(*this);
-      node_ = node_->prev;
+      node_ = node_->prev_;
       return temp;
     }
 
@@ -139,7 +124,7 @@ class list {
     }
 
    private:
-    BaseNode *node_;
+    Node *node_;
   };
 
   using value_type = T;
@@ -150,9 +135,9 @@ class list {
   using size_type = std::size_t;
 
   list() : size_(0) {
-    fantom_node_ = new BaseNode();
-    fantom_node_->prev = fantom_node_;
-    fantom_node_->next = fantom_node_;
+    fantom_node_ = new Node(T());
+    fantom_node_->prev_ = fantom_node_;
+    fantom_node_->next_ = fantom_node_;
   }
 
   explicit list(size_type n) : list() {
@@ -163,31 +148,31 @@ class list {
 
   explicit list(std::initializer_list<value_type> const &items) noexcept
       : list() {
-    for (const_reference value : items) {
-      push_back(value);
+    for (const_reference value_ : items) {
+      push_back(value_);
     }
   }
 
   list(const list &other) : list() {
-    for (const_reference value : other) {
-      push_back(value);
+    for (const_reference value_ : other) {
+      push_back(value_);
     }
   }
 
   list(list &&other) noexcept {
-    size_ = other.size_;
-    fantom_node_ = other.fantom_node_;
+    size_ = std::move(other.size_);
+    fantom_node_ = std::move(other.fantom_node_);
     other.size_ = 0;
     other.fantom_node_ = nullptr;
   }
 
   ~list() {
     while (!empty()) {
-      if (fantom_node_->prev != fantom_node_) {
-        Node *prev_tail = static_cast<Node *>(fantom_node_->prev);
-        Node *new_tail = static_cast<Node *>(prev_tail->prev);
-        new_tail->next = fantom_node_;
-        fantom_node_->prev = new_tail;
+      if (fantom_node_->prev_ != fantom_node_) {
+        Node *prev_tail = fantom_node_->prev_;
+        Node *new_tail = prev_tail->prev_;
+        new_tail->next_ = fantom_node_;
+        fantom_node_->prev_ = new_tail;
         delete prev_tail;
         --size_;
       }
@@ -200,38 +185,33 @@ class list {
       return *this;
     }
     clear();
-    for (const T &value : other) {
-      push_back(value);
+    for (const T &value_ : other) {
+      push_back(value_);
     }
     return *this;
   }
 
-        list &operator=(list &&other) noexcept {
-            while (!empty()) {
-                pop_back();
-            }
-            delete fantom_node_;
-            fantom_node_ = std::move(other.fantom_node_);
-            size_ = other.size_;
-            other.size_ = 0;
-            other.fantom_node_=nullptr;
-            return *this;
-        }
-
-
-  const_reference front() const {
-    return static_cast<Node *>(fantom_node_->next)->value;
+  list &operator=(list &&other) noexcept {
+    while (!empty()) {
+      pop_back();
+    }
+    delete fantom_node_;
+    fantom_node_ = std::move(other.fantom_node_);
+    size_ = other.size_;
+    other.size_ = 0;
+    other.fantom_node_ = nullptr;
+    return *this;
   }
 
-  const_reference back() const {
-    return static_cast<Node *>(fantom_node_->prev)->value;
-  }
+  const_reference front() const { return fantom_node_->next_->value_; }
 
-  iterator begin() { return iterator(fantom_node_->next); }
+  const_reference back() const { return fantom_node_->prev_->value_; }
+
+  iterator begin() { return iterator(fantom_node_->next_); }
 
   iterator end() { return iterator(fantom_node_); }
 
-  const_iterator begin() const { return const_iterator(fantom_node_->next); }
+  const_iterator begin() const { return const_iterator(fantom_node_->next_); }
 
   const_iterator end() const { return const_iterator(fantom_node_); }
 
@@ -249,70 +229,51 @@ class list {
     }
   }
 
-  iterator insert(iterator pos, const_reference value) {
-    Node *next_node = const_cast<Node *>(static_cast<const Node *>(pos.node_));
-    Node *insert_node = new Node(value);
-
-    next_node->prev->next = insert_node;
-    insert_node->prev = next_node->prev;
-    next_node->prev = insert_node;
-    insert_node->next = next_node;
-
+  iterator insert(iterator pos, const_reference value_) {
+    Node *next_node = pos.node_;
+    Node *insert_node = new Node(value_);
+    next_node->prev_->InsertNode(insert_node, next_node);
     ++size_;
     return iterator(insert_node);
   }
 
   void erase(iterator pos) {
-    Node *prev_node =
-        const_cast<Node *>(static_cast<const Node *>(pos.node_->prev));
-    Node *next_node =
-        const_cast<Node *>(static_cast<const Node *>(pos.node_->next));
-
+    Node *erase_node = pos.node_;
     if (pos.node_ == fantom_node_) {
       return;
     }
-    prev_node->next = next_node;
-    next_node->prev = prev_node;
+    erase_node->prev_->next_ = erase_node->next_;
+    erase_node->next_->prev_ = erase_node->prev_;
     delete pos.node_;
     --size_;
   }
 
-  void push_back(const_reference value) {
-    Node *new_node = new Node(value);
-    Node *prev_tail = static_cast<Node *>(fantom_node_->prev);
-    prev_tail->next = new_node;
-    new_node->prev = prev_tail;
-    new_node->next = fantom_node_;
-    fantom_node_->prev = new_node;
+  void push_back(const_reference value_) {
+    Node *new_node = new Node(value_);
+    fantom_node_->prev_->InsertNode(new_node, fantom_node_);
     ++size_;
   }
 
   void pop_back() {
-    Node *prev_tail = static_cast<Node *>(fantom_node_->prev);
-    Node *new_tail = static_cast<Node *>(prev_tail->prev);
-    new_tail->next = fantom_node_;
-    fantom_node_->prev = new_tail;
+    Node *prev_tail = fantom_node_->prev_;
+    Node *new_tail = prev_tail->prev_;
+    new_tail->next_ = fantom_node_;
+    fantom_node_->prev_ = new_tail;
     delete prev_tail;
     --size_;
   }
 
-    void push_front(const_reference value_) {
-            Node *new_node = new Node(value_);
-
-            fantom_node_->next->prev = new_node;
-            new_node->next=fantom_node_;
-            fantom_node_->next=new_node;
-            new_node->prev=fantom_node_;
-            
-            ++size_;
-        }
-
+  void push_front(const_reference value_) {
+    Node *new_node = new Node(value_);
+    fantom_node_->InsertNode(new_node, fantom_node_->next_);
+    ++size_;
+  }
 
   void pop_front() {
-    Node *prev_head = static_cast<Node *>(fantom_node_->next);
-    Node *new_head = static_cast<Node *>(prev_head->next);
-    new_head->prev = fantom_node_;
-    fantom_node_->next = new_head;
+    Node *prev_head = fantom_node_->next_;
+    Node *new_head = prev_head->next_;
+    new_head->prev_ = fantom_node_;
+    fantom_node_->next_ = new_head;
     delete prev_head;
     --size_;
   }
@@ -330,31 +291,24 @@ class list {
       return;
     }
 
-    Node *this_node = static_cast<Node *>(fantom_node_->next);
-    Node *other_node = static_cast<Node *>(other.fantom_node_->next);
+    Node *this_node = fantom_node_->next_;
+    Node *other_node = other.fantom_node_->next_;
 
     while (this_node != fantom_node_ && other_node != other.fantom_node_) {
-      if (other_node->value <= this_node->value) {
+      if (other_node->value_ <= this_node->value_) {
         Node *cur_other_node = other_node;
-        other_node = static_cast<Node *>(other_node->next);
-
-        cur_other_node->prev = this_node->prev;
-        cur_other_node->next = this_node;
-        this_node->prev->next = cur_other_node;
-        this_node->prev = cur_other_node;
+        other_node = other_node->next_;
+        this_node->prev_->InsertNode(cur_other_node, this_node);
 
       } else {
-        this_node = static_cast<Node *>(this_node->next);
+        this_node = this_node->next_;
       }
     }
 
     if (other_node != other.fantom_node_) {
-      Node *this_last = static_cast<Node *>(fantom_node_->prev);
-
-      this_last->next = other_node;
-      other_node->prev = this_last;
-      fantom_node_->prev = other.fantom_node_->prev;
-      other.fantom_node_->prev->next = fantom_node_;
+      fantom_node_->prev_->InsertNode(other_node, other_node->next_);
+      other.fantom_node_->prev_->prev_->InsertNode(other.fantom_node_->prev_,
+                                                   fantom_node_);
     }
 
     size_ += other.size_;
@@ -369,21 +323,10 @@ class list {
     if (other.empty()) {
       return;
     }
-
-    Node *prev_node =
-        const_cast<Node *>(static_cast<const Node *>(pos.node_->prev));
-    Node *next_node = const_cast<Node *>(static_cast<const Node *>(pos.node_));
-
-    Node *other_first_node =
-        const_cast<Node *>(static_cast<const Node *>(other.fantom_node_->next));
-    Node *other_last_node =
-        const_cast<Node *>(static_cast<const Node *>(other.fantom_node_->prev));
-
-    prev_node->next = other_first_node;
-    other_first_node->prev = prev_node;
-
-    next_node->prev = other_last_node;
-    other_last_node->next = next_node;
+    pos.node_->prev_->InsertNode(other.fantom_node_->next_,
+                                 other.fantom_node_->next_->next_);
+    other.fantom_node_->prev_->prev_->InsertNode(other.fantom_node_->prev_,
+                                                 pos.node_);
 
     size_ += other.size_;
     other.size_ = 0;
@@ -393,61 +336,45 @@ class list {
     if (size() < 2) {
       return;
     }
-
-    Node *fantom = static_cast<Node *>(fantom_node_);
-    Node *first_node = static_cast<Node *>(fantom_node_->next);
-    Node *last_node = static_cast<Node *>(fantom_node_->prev);
-
-    Node *cur_node = first_node;
-    while (cur_node != fantom) {
-      Node *next_node = static_cast<Node *>(cur_node->next);
-      cur_node->next = cur_node->prev;
-      cur_node->prev = next_node;
-      cur_node = next_node;
+    while (fantom_node_->next_ != fantom_node_) {
+      fantom_node_->next_->next_ = fantom_node_->next_->prev_;
+      fantom_node_->next_->prev_ = fantom_node_->next_->next_;
+      fantom_node_->next_ = fantom_node_->next_->next_;
     }
-    fantom_node_->next = last_node;
-    fantom_node_->prev = first_node;
+    fantom_node_->next_ = fantom_node_->prev_;
+    fantom_node_->prev_ = fantom_node_->next_;
   }
 
   void unique() {
     if (size_ <= 1) {
       return;
     }
-
-    Node *fantom = static_cast<Node *>(fantom_node_);
-    Node *current = static_cast<Node *>(fantom_node_->next);
-
-    while (current->next != fantom) {
-      if (current->value == static_cast<Node *>(current->next)->value) {
-        erase(iterator(current->next));
+    while (fantom_node_->next_->next_ != fantom_node_) {
+      if (fantom_node_->next_->value_ == fantom_node_->next_->next_->value_) {
+        erase(iterator(fantom_node_->next_->next_));
       } else {
-        current = static_cast<Node *>(current->next);
+        fantom_node_->next_ = fantom_node_->next_->next_;
       }
     }
   }
 
-    void sort(std::less<value_type> cmp = std::less<value_type>{}) {
-        MergeSort(begin(), end(), cmp);
-    }
+  void sort(std::less<value_type> cmp = std::less<value_type>{}) {
+    MergeSort(begin(), end(), cmp);
+  }
 
   template <typename... Args>
   iterator insert_many(const_iterator pos, Args &&...args) {
-    Node *prev_node =
-        const_cast<Node *>(static_cast<const Node *>(pos.node_->prev));
-    Node *next_node = const_cast<Node *>(static_cast<const Node *>(pos.node_));
-
+    Node *prev_node = pos.node_->prev_;
+    Node *next_node = pos.node_;
     list<value_type> init_list{std::forward<Args>(args)...};
-    prev_node->next = init_list.fantom_node_->next;
-    next_node->prev = init_list.fantom_node_->prev;
-    init_list.fantom_node_->next->prev = prev_node;
-    init_list.fantom_node_->prev->next = next_node;
+    prev_node->next_ = init_list.fantom_node_->next_;
+    next_node->prev_ = init_list.fantom_node_->prev_;
+    init_list.fantom_node_->next_->prev_ = prev_node;
+    init_list.fantom_node_->prev_->next_ = next_node;
 
     size_ += init_list.size();
 
-    init_list.size_ = 0;
-    init_list.ValidFantomNode();
-
-    return iterator(prev_node->next);
+    return iterator(prev_node->next_);
   }
 
   template <typename... Args>
@@ -463,22 +390,33 @@ class list {
   }
 
  private:
-  void ValidFantomNode() {
-    fantom_node_->prev = fantom_node_;
-    fantom_node_->next = fantom_node_;
-  }
+  struct Node {
+    Node *prev_;
+    Node *next_;
+    value_type value_;
 
-      void MergeSort(iterator begin, iterator end, std::less<value_type> cmp) {
-        const auto num_elem = std::distance(begin, end);
-        if (num_elem > 1) {
-            const auto middle = std::next(begin, num_elem / 2);
-            MergeSort(begin, middle, cmp);
-            MergeSort(middle, end, cmp);
-            std::inplace_merge(begin, middle, end, cmp);
-        }
+    explicit Node(const T &data)
+        : prev_(nullptr), next_(nullptr), value_(data) {}
+
+    void InsertNode(Node *insert_node, Node *next_node) {
+      next_node->prev_ = insert_node;
+      insert_node->next_ = next_node;
+      this->next_ = insert_node;
+      insert_node->prev_ = this;
     }
+  };
+
+  void MergeSort(iterator begin, iterator end, std::less<value_type> cmp) {
+    const auto num_elem = std::distance(begin, end);
+    if (num_elem > 1) {
+      const auto middle = std::next(begin, num_elem / 2);
+      MergeSort(begin, middle, cmp);
+      MergeSort(middle, end, cmp);
+      std::inplace_merge(begin, middle, end, cmp);
+    }
+  }
   size_type size_;
-  BaseNode *fantom_node_;
+  Node *fantom_node_;
 };
 }  // namespace s21
 

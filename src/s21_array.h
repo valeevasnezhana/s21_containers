@@ -24,26 +24,28 @@ class array {
   constexpr explicit array(std::initializer_list<value_type> const &items)
       : array() {
     size_type i = 0;
-    for (auto &&item : items) {
+    for (auto const &item : items) {
       array_[i++] = std::move(item);
     }
   }
 
-  array(const array &a) : array() {
-    for (size_type i = 0; i < size_; ++i) {
-      array_[i] = a.array_[i];
-    }
+  constexpr array(const array &a) : array() {
+    std::copy(a.array_, a.array_ + size_, array_);
   }
 
-  constexpr array(array &&a) noexcept : array(a) {}
+  constexpr array(array &&a) noexcept : array() {
+    std::move(a.array_, a.array_ + size_, array_);
+  }
 
   ~array() {}
 
-  array operator=(array &&a) noexcept {
-    for (size_type i = 0; i < size_; ++i) {
-      array_[i] = std::move(a.array_[i]);
-    }
+  constexpr array operator=(array &&a) noexcept {
+    std::move(a.array_, a.array_ + size_, array_);
+    return *this;
+  }
 
+  constexpr array operator=(array &a) {
+    std::copy(a.array_, a.array_ + size_, array_);
     return *this;
   }
 
@@ -77,7 +79,7 @@ class array {
     std::swap(size_, other.size_);
   }
 
-  void fill(const_reference value) {
+  constexpr void fill(const_reference value) {
     for (size_type i = 0; i < size_; ++i) {
       array_[i] = value;
     }

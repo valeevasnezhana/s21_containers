@@ -5,9 +5,10 @@
 #ifndef CPP2_S21_CONTAINERS_SRC_S21_VECTOR_H_
 #define CPP2_S21_CONTAINERS_SRC_S21_VECTOR_H_
 
+#include <algorithm>
 #include <initializer_list>
-#include <iostream>
 #include <limits>
+#include <stdexcept>
 
 namespace s21 {
 template <class T>
@@ -25,17 +26,14 @@ class vector {
 
   explicit vector(size_type n)
       : size_(n), capacity_(n), array_(new value_type[n]) {
-    for (size_type i = 0; i < n; ++i) {
-      array_[i] = T();
-    }
+    std::fill(array_, array_ + n, T());
   }
 
   explicit vector(std::initializer_list<value_type> const &items)
-      : vector(items.size()) {
-    size_type i = 0;
-    for (auto &&item : items) {
-      array_[i++] = std::move(item);
-    }
+      : size_(items.size()),
+        capacity_(items.size()),
+        array_(new value_type[items.size()]) {
+    std::copy(items.begin(), items.end(), array_);
   }
 
   vector(const vector &other)
@@ -120,9 +118,7 @@ class vector {
 
   void reserve(size_type size) {
     T *new_array = new value_type[size];
-    for (size_t i = 0; i < size_; ++i) {
-      new_array[i] = std::move(array_[i]);
-    }
+    std::move(array_, array_ + size_, new_array);
     delete[] array_;
     array_ = new_array;
     capacity_ = size;
@@ -143,31 +139,33 @@ class vector {
   void shrink_to_fit() {
     if (size_ < capacity_) {
       T *new_array = new value_type[size_];
-      for (unsigned int i = 0; i < size_; i++)
-        new_array[i] = std::move(array_[i]);
-      capacity_ = size_;
+      std::move(array_, array_ + size_, new_array);
       delete[] array_;
       array_ = new_array;
+      capacity_ = size_;
     }
   }
 
   void clear() noexcept { size_ = 0; }
 
   iterator insert(iterator pos, const_reference value) {
-    size_t index = pos - array_;
-    push_back(value);
-    pos = begin() + index;
-    size_type index_back = size_ - 1;
-    for (; index != index_back; --index_back) {
-      std::swap(array_[index_back], array_[index_back - 1]);
+    size_type index = pos - array_;
+    if (size_ >= capacity_) {
+      reserve(capacity_ == 0 ? 1 : capacity_ * 2);
     }
+
+    for (size_type i = size_; i > index; --i) {
+      array_[i] = std::move(array_[i - 1]);
+    }
+    array_[index] = value;
+    ++size_;
     return pos;
   }
 
   void erase(iterator pos) {
     size_type del = pos - begin();
     for (; del < size_ - 1; ++del) {
-      array_[del] = array_[del + 1];
+      array_[del] = std::move(array_[del + 1]);
     }
     --size_;
   }
@@ -196,19 +194,13 @@ class vector {
 
   template <typename... Args>
   void insert_many_back(Args &&...args) {
-    size_type num_elems = sizeof...(Args);
-    if (size_ + num_elems > capacity_) {
-      reserve(capacity_ * 2);
-    }
-    size_type num_idx = size_;
-    ((array_[num_idx++] = std::forward<Args>(args)), ...);
-    size_ += num_elems;
+    insert_many(end(), args...);
   }
 
  private:
   size_type size_;
   size_type capacity_;
-  T *array_;
+  pointer array_;
 };
 }  // namespace s21
 #endif  // CPP2_S21_CONTAINERS_SRC_S21_VECTOR_H_

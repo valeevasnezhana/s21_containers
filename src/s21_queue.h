@@ -6,10 +6,9 @@
 #define CONTAINERS_QUEUE_H
 
 namespace s21 {
-template <typename T, class Container = s21::list<T>>
+template <typename T>
 class queue {
  public:
-  using container_type = Container;
   using value_type = T;
   using reference = T &;
   using const_reference = const T &;
@@ -53,7 +52,7 @@ class queue {
   void swap(queue &other) { head_.swap(other.head_); }
 
  private:
-  container_type head_;
+  s21::list<T> head_;
 };
 }  // namespace s21
 #endif  // CONTAINERS_QUEUE_H
