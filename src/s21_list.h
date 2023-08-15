@@ -2,8 +2,8 @@
 // Created by Tandra Ymir on 7/27/23.
 //
 
-#ifndef CPP2_S21_CONTAINERS_SRC_LIST_LIST_H_
-#define CPP2_S21_CONTAINERS_SRC_LIST_LIST_H_
+#ifndef CPP2_S21_CONTAINERS_SRC_S21_LIST_H_
+#define CPP2_S21_CONTAINERS_SRC_S21_LIST_H_
 
 #include <initializer_list>
 #include <iostream>
@@ -365,15 +365,9 @@ class list {
   template <typename... Args>
   iterator insert_many(const_iterator pos, Args &&...args) {
     Node *prev_node = pos.node_->prev_;
-    Node *next_node = pos.node_;
     list<value_type> init_list{std::forward<Args>(args)...};
-    prev_node->next_ = init_list.fantom_node_->next_;
-    next_node->prev_ = init_list.fantom_node_->prev_;
-    init_list.fantom_node_->next_->prev_ = prev_node;
-    init_list.fantom_node_->prev_->next_ = next_node;
-
+    splice(pos, init_list);
     size_ += init_list.size();
-
     return iterator(prev_node->next_);
   }
 

@@ -8,7 +8,6 @@
 #include <algorithm>
 #include <initializer_list>
 #include <limits>
-#include <stdexcept>
 
 namespace s21 {
 template <class T>

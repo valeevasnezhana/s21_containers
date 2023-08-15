@@ -2,11 +2,10 @@
 // Created by Tandra Ymir on 8/1/23.
 //
 
-#ifndef CONTAINERS_STACK_H
-#define CONTAINERS_STACK_H
+#ifndef CPP2_S21_CONTAINERS_SRC_S21_STACK_H
+#define CPP2_S21_CONTAINERS_SRC_S21_STACK_H
 
-// #include "s21_list.h"
-// #include "s21_vector.h"
+#include "s21_list.h"
 
 namespace s21 {
 template <typename T>
@@ -57,4 +56,4 @@ class stack {
   s21::list<T> head_;
 };
 }  // namespace s21
-#endif  // CONTAINERS_STACK_H
+#endif  // CPP2_S21_CONTAINERS_SRC_S21_STACK_H
