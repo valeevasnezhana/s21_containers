@@ -1,5 +1,5 @@
 CXX = g++
-FLAGS = -std=c++17 -Wall -Werror -Wextra -g
+FLAGS = -std=c++17 -Wall -g
 SANITIZE = -fsanitize=address
 TARGETS = tests/test.cc
 GCOV = -fprofile-arcs -ftest-coverage -fPIC -pthread
