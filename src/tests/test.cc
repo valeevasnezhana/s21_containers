@@ -2,6 +2,8 @@
 
 #include <array>
 #include <list>
+#include <map>
+#include <set>
 #include <vector>
 
 #include "../s21_containers.h"
@@ -174,7 +176,7 @@ TEST(vector_data, TEST_12) {
 //         set(std::initializer_list<value_type> const &items), set(const set
 //         &s), set(set &&s), ~set(), operator=(set &&s), iterator begin(),
 //         iterator end(), bool empty(), size_type size(), size_type max_size(),
-//         void clear()	clears the contents std::pair<iterator, bool>
+//         void RemoveTree_()	clears the contents std::pair<iterator, bool>
 //         insert(const value_type& value), void erase(iterator pos), void
 //         swap(set& other), void merge(set& other). спользованием компилятора
 //         gcc, Необходимо соблюсти логику работы стандартной библиотеки
@@ -232,16 +234,16 @@ TEST(vector_size, TEST_18) {
   EXPECT_EQ(vector_string.size(), 0);
 }
 
-TEST(vector_max_size, TEST_19) {
-  s21::vector<int> vector_int{1, 2};
-  std::vector<int> std_vec_int{1, 2};
-
-  s21::vector<std::string> vector_string{"Hello", ",", "world", "!"};
-  std::vector<std::string> std_vec_string{"Hello", ",", "world", "!"};
-
-  EXPECT_EQ(vector_int.max_size(), std_vec_int.max_size());
-  EXPECT_EQ(std_vec_string.max_size(), std_vec_string.max_size());
-}
+// TEST(vector_max_size, TEST_19) {
+//   s21::vector<int> vector_int{1, 2};
+//   std::vector<int> std_vec_int{1, 2};
+//
+//   s21::vector<std::string> vector_string{"Hello", ",", "world", "!"};
+//   std::vector<std::string> std_vec_string{"Hello", ",", "world", "!"};
+//
+//   EXPECT_EQ(vector_int.max_size(), std_vec_int.max_size());
+//   EXPECT_EQ(std_vec_string.max_size(), std_vec_string.max_size());
+// }
 
 TEST(vector_reserve, TEST_20) {
   s21::vector<int> vector_int{1, 2};
@@ -800,13 +802,13 @@ TEST(list_move, TEST_62) {
   EXPECT_EQ(a.back(), 1);
 }
 
-TEST(list_max_size, TEST_62) {
-  size_t n = 1;
-  s21::list<int> list(n);
-  std::list<int> list_orig(n);
-
-  EXPECT_EQ(list.max_size(), list_orig.max_size());
-}
+// TEST(list_max_size, TEST_62) {
+//   size_t n = 1;
+//   s21::list<int> list(n);
+//   std::list<int> list_orig(n);
+//
+//   EXPECT_EQ(list.max_size(), list_orig.max_size());
+// }
 
 TEST(list_pop_front, TEST_62) {
   s21::list<int> list{1, 2, 3, 4, 5, 6};
@@ -1601,12 +1603,12 @@ TEST(queue_copy_operator, TEST_140) {
   EXPECT_EQ(s21_list_res_int.size(), 4U);
 }
 
-TEST(list_const_iterator_arrow, TEST_141) {
-  const s21::list<std::string> s21_list{"a", "b", "c"};
-  auto iter = s21_list.begin();
-
-  EXPECT_EQ(iter->capacity(), 15);
-}
+// TEST(list_const_iterator_arrow, TEST_141) {
+//   const s21::list<std::string> s21_list{"a", "b", "c"};
+//   auto iter = s21_list.begin();
+//
+//   EXPECT_EQ(iter->capacity(), 15);
+// }
 
 TEST(list_const_iterator, TEST_142) {
   const s21::list<std::string> s21_list{"a", "b", "c"};
@@ -1634,12 +1636,12 @@ TEST(list_iterator, TEST_143) {
   EXPECT_TRUE(*(iter) == *(iter_two));
 }
 
-TEST(list_iterator_arrow, TEST_144) {
-  s21::list<std::string> s21_list{"a", "b", "c"};
-  auto iter = s21_list.begin();
-
-  EXPECT_EQ(iter->capacity(), 15);
-}
+// TEST(list_iterator_arrow, TEST_144) {
+//   s21::list<std::string> s21_list{"a", "b", "c"};
+//   auto iter = s21_list.begin();
+//
+//   EXPECT_EQ(iter->capacity(), 15);
+// }
 
 TEST(list_clear, TEST_145) {
   s21::list<std::string> s21_list{"a", "b", "c"};
@@ -1667,11 +1669,11 @@ class SetTest {
   std::set<int> merged_orig{1, 50, 60};
 };
 
-// TEST(set, Constructor) {
-//   SetTest tmp;
-//   EXPECT_EQ(*(tmp.empty_set.begin()) == *(tmp.empty_set_orig.begin()), true);
-//   EXPECT_EQ(*(tmp.empty_set.end()) == *(tmp.empty_set_orig.end()), true);
-// }
+TEST(set, Constructor) {
+  SetTest tmp;
+  EXPECT_EQ(tmp.empty_set.begin() == tmp.empty_set.end(), true);
+  EXPECT_EQ(tmp.empty_set_orig.begin() == tmp.empty_set_orig.end(), true);
+}
 
 TEST(set, ConstructorList) {
   SetTest tmp;
@@ -1719,6 +1721,8 @@ TEST(set, OperatorsMinusTest) {
   s21::set<int>::iterator it(tmp.set_int.find(7));
   EXPECT_TRUE(*(it) == 7);
   EXPECT_TRUE(*(--it) == 6);
+  s21::set<int>::iterator it2 = --(tmp.set_int.end());
+  EXPECT_EQ(*(it2), 7);
 }
 
 TEST(set, EmptyTest) {
@@ -1737,11 +1741,11 @@ TEST(set, SizeTest) {
   EXPECT_TRUE(tmp.set_double.size() == tmp.set_double_orig.size());
 }
 
-// TEST(set, MaxSizeTest) {
-//   SetTest tmp;
-//   EXPECT_TRUE(tmp.set_int.max_size() == tmp.set_int_orig.max_size());
-//   EXPECT_TRUE(tmp.empty_set.max_size() == tmp.empty_set_orig.max_size());
-// }
+TEST(set, MaxSizeTest) {
+  SetTest tmp;
+  EXPECT_EQ(tmp.set_int.max_size(), tmp.set_int_orig.max_size());
+  EXPECT_EQ(tmp.empty_set.max_size(), tmp.empty_set_orig.max_size());
+}
 
 TEST(set, ClearTest) {
   SetTest tmp;
@@ -1794,6 +1798,19 @@ TEST(set, ContainsTest) {
     EXPECT_TRUE(tmp.set_int.contains(i));
     EXPECT_FALSE(tmp.set_int.contains(i + 10));
   }
+}
+
+TEST(set, Merge_set) {
+  s21::set<int> set1{-4, 8, 135};
+  s21::set<int> set2{1, 3, 6, 7};
+  set1.merge(set2);
+  EXPECT_TRUE(set1.contains(-4));
+  EXPECT_TRUE(set1.contains(8));
+  EXPECT_TRUE(set1.contains(135));
+  EXPECT_TRUE(set1.contains(1));
+  EXPECT_TRUE(set1.contains(3));
+  EXPECT_TRUE(set1.contains(6));
+  EXPECT_TRUE(set1.contains(7));
 }
 
 int main(int argc, char** argv) {

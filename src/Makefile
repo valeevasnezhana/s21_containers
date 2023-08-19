@@ -22,8 +22,8 @@ gcov_report: test
 	open ./report/coverage.html
 
 style:
-	@clang-format -style=Google -i *.h
-	@clang-format -style=Google -n *.h
+	@clang-format -style=Google -i *.h tests/*.cc
+	@clang-format -style=Google -n *.h tests/*.cc
 
 googlestyle:
 	python2 cpplint.py *.h
