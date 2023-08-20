@@ -5,7 +5,7 @@
 #include <utility>
 namespace s21 {
 
-template <class Key>
+template <class Key, class Compare = std::less<Key>>
 class set {
  public:
   template <class T>
@@ -268,9 +268,9 @@ class set {
     AVLNode* current = root_;
 
     while (current != nullptr) {
-      if (key < current->value)
+      if (Compare{}(key, current->value))
         current = current->left;
-      else if (key > current->value)
+      else if (Compare{}(current->value, key))
         current = current->right;
       else
         return true;
@@ -351,10 +351,10 @@ class set {
       return new_node;
     }
 
-    if (new_node->value < node->value) {
+    if (Compare{}(new_node->value, node->value)) {
       node->left = InsertNode_(node->left, new_node);
       node->left->parent = node;
-    } else if (new_node->value > node->value) {
+    } else if (Compare{}(node->value, new_node->value)) {
       node->right = InsertNode_(node->right, new_node);
       node->right->parent = node;
     } else {
@@ -367,9 +367,9 @@ class set {
   AVLNode* RemoveNode_(AVLNode* node, key_type key) {
     if (node == nullptr) return nullptr;
 
-    if (key < node->value)
+    if (Compare{}(key, node->value))
       node->left = RemoveNode_(node->left, key);
-    else if (key > node->value)
+    else if (Compare{}(node->value, key))
       node->right = RemoveNode_(node->right, key);
     else {
       if (node->left == nullptr || node->right == nullptr) {
@@ -413,9 +413,9 @@ class set {
     AVLNode* current = root_;
 
     while (current != nullptr) {
-      if (value < current->value)
+      if (Compare{}(value, current->value))
         current = current->left;
-      else if (value > current->value)
+      else if (Compare{}(current->value, value))
         current = current->right;
       else
         return current;
