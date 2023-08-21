@@ -1,5 +1,7 @@
+// Copyright 2023 School21 @gruntmet Snezhana Valeeva
 #ifndef CPP2_S21_CONTAINERS_SRC_S21_SET_H_
 #define CPP2_S21_CONTAINERS_SRC_S21_SET_H_
+#include <functional>
 #include <initializer_list>
 #include <limits>
 #include <utility>
@@ -34,9 +36,7 @@ class set {
           height{1},
           left{nullptr},
           right{nullptr},
-          parent{nullptr} {
-      ;
-    }
+          parent{nullptr} {}
   };
 
  public:
@@ -181,7 +181,7 @@ class set {
     }
   };
 
-  set() : root_(nullptr), size_(0){};
+  set() : root_(nullptr), size_(0) {}
 
   set(std::initializer_list<value_type> const& items) : set() {
     for (const value_type& item : items) {
@@ -377,18 +377,19 @@ class set {
   AVLNode* RemoveNode_(AVLNode* node, key_type key) {
     if (node == nullptr) return nullptr;
 
-    if (Compare{}(key, node->value))
+    if (Compare{}(key, node->value)) {
       node->left = RemoveNode_(node->left, key);
-    else if (Compare{}(node->value, key))
+    } else if (Compare{}(node->value, key)) {
       node->right = RemoveNode_(node->right, key);
-    else {
+    } else {
       if (node->left == nullptr || node->right == nullptr) {
         AVLNode* temp = node->left ? node->left : node->right;
         if (temp == nullptr) {
           temp = node;
           node = nullptr;
-        } else
+        } else {
           *node = *temp;
+        }
         delete temp;
       } else {
         AVLNode* temp = FindMin_(node->right);

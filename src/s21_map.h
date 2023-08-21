@@ -1,6 +1,8 @@
+// Copyright 2023 School21 @gruntmet Snezhana Valeeva
 #ifndef CPP2_S21_CONTAINERS_SRC_S21_MAP_H
 #define CPP2_S21_CONTAINERS_SRC_S21_MAP_H
 
+#include <functional>
 #include <initializer_list>
 #include <limits>
 #include <utility>
@@ -27,11 +29,6 @@ class map {
     MyPair_<First, Second>(const MyPair_<First, Second> &other)
         : first(other.first), second(other.second) {}
 
-    //    MyPair_<First, Second> &operator=(const MyPair_ &other) {
-    //      first = other.first;
-    //      second = other.second;
-    //      return *this;
-    //    }
     First first;
     Second second;
   };
@@ -90,9 +87,9 @@ class map {
   std::pair<iterator, bool> insert_or_assign(const key_type &key,
                                              const mapped_type &obj) {
     bool status = contains(key);
-    if (status)
+    if (status) {
       at(key) = obj;
-    else {
+    } else {
       insert(key, obj);
     }
     auto it = (data_.insert(SetValueType_(key, obj))).first;
