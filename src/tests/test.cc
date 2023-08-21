@@ -170,22 +170,6 @@ TEST(vector_data, TEST_12) {
   EXPECT_EQ(vector_string.data(), &vector_string[0]);
 }
 
-// напиши реализацию set "template <class Key> class set" в нэймспейсе s21 на
-// шаблонах в C++ с использованием AVL дерева, а так же итератор к set. Должны
-// быть определены следующие методы: set(),
-//         set(std::initializer_list<value_type> const &items), set(const set
-//         &s), set(set &&s), ~set(), operator=(set &&s), iterator begin(),
-//         iterator end(), bool empty(), size_type size(), size_type max_size(),
-//         void RemoveTree_()	clears the contents std::pair<iterator, bool>
-//         insert(const value_type& value), void erase(iterator pos), void
-//         swap(set& other), void merge(set& other). спользованием компилятора
-//         gcc, Необходимо соблюсти логику работы стандартной библиотеки
-//         шаблонов (STL) (в части проверок, работы с памятью и поведения в
-//         нештатных ситуациях). Контейнеры предоставляют через методы begin() и
-//         end() итераторы, которые указывают на первый и следующий после
-//         последнего элементы контейнера соответственно.
-// методы итератора: *iter, ++iter, --iter, iter1 == iter2, iter1 != iter2
-
 TEST(vector_begin, TEST_13) {
   s21::vector<int> vector_int{1, 2};
   s21::vector<std::string> vector_string{"I", "Groot"};
@@ -1653,20 +1637,17 @@ TEST(list_clear, TEST_145) {
 class SetTest {
  public:
   s21::set<int> empty_set;
-  s21::set<int> set_int{3, 5, 7, 2, 1, 1, 4, 6};
+  s21::set<int> set_int{3, 5, 7, 2, 1, 1, 4, 6, 0, -5, -1, -10, -12};
   s21::set<std::string> set_string{"baka", "obon", "kokoro"};
   s21::set<double> set_double{1.2, 2.0, 3.345, -1.233};
 
   std::set<int> empty_set_orig;
-  std::set<int> set_int_orig{3, 5, 7, 2, 1, 1, 4, 6};
+  std::set<int> set_int_orig{3, 5, 7, 2, 1, 1, 4, 6, 0, -5, -1, -10, -12};
   std::set<std::string> set_string_orig{"baka", "obon", "kokoro"};
   std::set<double> set_double_orig{1.2, 2.0, 3.345, -1.233};
 
   s21::set<int> swapped{100, 101, 102};
   std::set<int> swapped_orig{100, 101, 102};
-
-  s21::set<int> merged{1, 50, 60};
-  std::set<int> merged_orig{1, 50, 60};
 };
 
 TEST(set, Constructor) {
@@ -1677,7 +1658,7 @@ TEST(set, Constructor) {
 
 TEST(set, ConstructorList) {
   SetTest tmp;
-  int eq[7]{1, 2, 3, 4, 5, 6, 7};
+  int eq[12]{-12, -10, -5, -1, 0, 1, 2, 3, 4, 5, 6, 7};
   int* pos = eq;
   for (auto it : tmp.set_int) {
     EXPECT_EQ(it == *(pos++), true);
@@ -1712,8 +1693,8 @@ TEST(set, ConstructorMove) {
 TEST(set, OperatorsPlusTest) {
   SetTest tmp;
   s21::set<int>::iterator it(tmp.set_int.begin());
-  EXPECT_TRUE(*(it) == 1);
-  EXPECT_TRUE(*(++it) == 2);
+  EXPECT_TRUE(*(it) == -12);
+  EXPECT_TRUE(*(++it) == -10);
 }
 
 TEST(set, OperatorsMinusTest) {
@@ -1723,6 +1704,12 @@ TEST(set, OperatorsMinusTest) {
   EXPECT_TRUE(*(--it) == 6);
   s21::set<int>::iterator it2 = --(tmp.set_int.end());
   EXPECT_EQ(*(it2), 7);
+  EXPECT_EQ(*(--it2), 6);
+  EXPECT_EQ(*(--it2), 5);
+  EXPECT_EQ(*(--it2), 4);
+  EXPECT_EQ(*(--it2), 3);
+  EXPECT_EQ(*(--it2), 2);
+  EXPECT_EQ(*(--it2), 1);
 }
 
 TEST(set, EmptyTest) {
@@ -1811,6 +1798,239 @@ TEST(set, Merge_set) {
   EXPECT_TRUE(set1.contains(3));
   EXPECT_TRUE(set1.contains(6));
   EXPECT_TRUE(set1.contains(7));
+}
+
+TEST(map, ConstructorDefaultMap) {
+  s21::map<int, char> my_empty_map;
+  std::map<int, char> orig_empty_map;
+  EXPECT_EQ(my_empty_map.empty(), orig_empty_map.empty());
+}
+
+TEST(map, ConstructorInitializerMap) {
+  s21::map<int, char> my_map = {{1, 'x'}, {2, 'b'}, {3, 'z'}, {4, 'y'}};
+  std::map<int, char> orig_map = {{1, 'x'}, {2, 'b'}, {3, 'z'}, {4, 'y'}};
+  EXPECT_EQ(my_map.size(), orig_map.size());
+  auto my_it = my_map.begin();
+  auto orig_it = orig_map.begin();
+  for (; my_it != my_map.end(); ++my_it, ++orig_it) {
+    EXPECT_TRUE((*my_it).first == (*orig_it).first);
+    EXPECT_TRUE((*my_it).second == (*orig_it).second);
+  }
+}
+
+TEST(map, ConstructorInitializer2Map) {
+  s21::map<int, char> my_map = {};
+  std::map<int, char> orig_map = {};
+  EXPECT_EQ(my_map.size(), orig_map.size());
+  auto my_it = my_map.begin();
+  auto orig_it = orig_map.begin();
+  for (; my_it != my_map.end(); ++my_it, ++orig_it) {
+    EXPECT_TRUE((*my_it).first == (*orig_it).first);
+    EXPECT_TRUE((*my_it).second == (*orig_it).second);
+  }
+}
+
+TEST(map, ConstructorCopyMap) {
+  s21::map<int, int> my_map = {{1, 2}, {3, 4}, {5, 6}};
+  std::map<int, int> orig_map = {{1, 2}, {3, 4}, {5, 6}};
+  s21::map<int, int> my_map_copy = my_map;
+  std::map<int, int> orig_map_copy = orig_map;
+  EXPECT_EQ(my_map_copy.size(), orig_map_copy.size());
+  auto my_it = my_map_copy.begin();
+  auto orig_it = orig_map_copy.begin();
+  for (; my_it != my_map_copy.end(); ++my_it, ++orig_it) {
+    EXPECT_TRUE((*my_it).first == (*orig_it).first);
+    EXPECT_TRUE((*my_it).second == (*orig_it).second);
+  }
+}
+
+TEST(map, ConstructorMoveMap) {
+  s21::map<int, int> my_map = {{1, 2}, {3, 4}, {5, 6}};
+  std::map<int, int> orig_map = {{1, 2}, {3, 4}, {5, 6}};
+  s21::map<int, int> my_map_copy = std::move(my_map);
+  std::map<int, int> orig_map_copy = std::move(orig_map);
+  EXPECT_EQ(my_map.size(), orig_map.size());
+  EXPECT_EQ(my_map_copy.size(), orig_map_copy.size());
+  auto my_it = my_map_copy.begin();
+  auto orig_it = orig_map_copy.begin();
+  for (; my_it != my_map_copy.end(); ++my_it, ++orig_it) {
+    EXPECT_TRUE((*my_it).first == (*orig_it).first);
+    EXPECT_TRUE((*my_it).second == (*orig_it).second);
+  }
+}
+
+TEST(map, MapOperator) {
+  s21::map<char, std::string> my_map = {
+      {'a', "Alina"}, {'b', "Boris"}, {'c', "Chuck"}};
+  std::map<char, std::string> orig_map = {
+      {'a', "Alina"}, {'b', "Boris"}, {'c', "Chuck"}};
+  my_map['a'] = "Alisa";
+  orig_map['a'] = "Alisa";
+  orig_map['b'] = "Ben";
+  EXPECT_TRUE(my_map['a'] == orig_map['a']);
+  EXPECT_FALSE(my_map['b'] == orig_map['b']);
+  EXPECT_TRUE(my_map['c'] == orig_map['c']);
+}
+
+TEST(map, MapAtOperatorException) {
+  s21::map<char, std::string> my_map = {
+      {'a', "Alina"}, {'b', "Boris"}, {'c', "Chuck"}};
+  EXPECT_THROW(my_map.at('g') = "Alisa", std::out_of_range);
+}
+
+TEST(map, MapAtOperator) {
+  s21::map<char, std::string> my_map = {
+      {'a', "Alina"}, {'b', "Boris"}, {'c', "Chuck"}};
+  std::map<char, std::string> orig_map = {
+      {'a', "Alina"}, {'b', "Boris"}, {'c', "Chuck"}};
+  my_map.at('a') = "Alisa";
+  orig_map.at('a') = "Alisa";
+  orig_map.at('b') = "Ben";
+  EXPECT_TRUE(my_map['a'] == orig_map['a']);
+  EXPECT_FALSE(my_map['b'] == orig_map['b']);
+  EXPECT_TRUE(my_map['c'] == orig_map['c']);
+}
+
+TEST(map, MapCapacity) {
+  s21::map<char, std::string> my_map;
+  std::map<char, std::string> orig_map;
+  EXPECT_TRUE(my_map.empty() == orig_map.empty());
+  my_map.insert('z', "wow");
+  EXPECT_FALSE(my_map.empty() == orig_map.empty());
+  EXPECT_EQ(my_map.size(), 1);
+  EXPECT_EQ(my_map.max_size(), orig_map.max_size());
+}
+
+TEST(map, MapClear) {
+  s21::map<int, int> my_map;
+  std::map<int, int> orig_map;
+  my_map.clear();
+  orig_map.clear();
+  EXPECT_EQ(my_map.empty(), orig_map.empty());
+  my_map.insert(std::make_pair(1, 1));
+  orig_map.insert(std::make_pair(1, 1));
+  EXPECT_EQ(my_map.empty(), orig_map.empty());
+  my_map.clear();
+  orig_map.clear();
+  EXPECT_EQ(my_map.empty(), orig_map.empty());
+}
+
+TEST(map, MapInsert1) {
+  s21::map<int, char> my_map;
+  std::map<int, char> orig_map;
+  my_map.insert(std::make_pair(1, 'a'));
+  my_map.insert(std::make_pair(2, 'a'));
+  my_map.insert(std::make_pair(3, 'a'));
+  orig_map.insert(std::make_pair(1, 'a'));
+  orig_map.insert(std::make_pair(2, 'a'));
+  orig_map.insert(std::make_pair(3, 'a'));
+
+  auto my_it = my_map.begin();
+  auto orig_it = orig_map.begin();
+  for (; my_it != my_map.end(); ++my_it, ++orig_it) {
+    EXPECT_TRUE((*my_it).first == (*orig_it).first);
+    EXPECT_TRUE((*my_it).second == (*orig_it).second);
+  }
+
+  auto pr1 = my_map.insert(std::make_pair(1, 'a'));
+  auto pr2 = orig_map.insert(std::make_pair(1, 'a'));
+  EXPECT_TRUE(pr1.second == pr2.second);
+}
+
+TEST(map, MapInsert2) {
+  s21::map<int, char> my_map;
+  std::map<int, char> orig_map;
+  my_map.insert(1, 'a');
+  my_map.insert(2, 'a');
+  my_map.insert(3, 'a');
+  orig_map.insert(std::make_pair(1, 'a'));
+  orig_map.insert(std::make_pair(2, 'a'));
+  orig_map.insert(std::make_pair(3, 'a'));
+
+  auto my_it = my_map.begin();
+  auto orig_it = orig_map.begin();
+  for (; my_it != my_map.end(); ++my_it, ++orig_it) {
+    EXPECT_TRUE((*my_it).first == (*orig_it).first);
+    EXPECT_TRUE((*my_it).second == (*orig_it).second);
+  }
+
+  auto pr1 = my_map.insert(1, 'a');
+  auto pr2 = orig_map.insert(std::make_pair(1, 'a'));
+  EXPECT_TRUE(pr1.second == pr2.second);
+}
+
+TEST(map, MapInsert3) {
+  s21::map<int, char> my_map;
+  std::map<int, char> orig_map;
+  my_map.insert(1, 'a');
+  my_map.insert(2, 'a');
+  my_map.insert(3, 'a');
+  orig_map.insert(std::make_pair(1, 'a'));
+  orig_map.insert(std::make_pair(2, 'a'));
+  orig_map.insert(std::make_pair(3, 'a'));
+
+  auto my_it = my_map.begin();
+  auto orig_it = orig_map.begin();
+  for (; my_it != my_map.end(); ++my_it, ++orig_it) {
+    EXPECT_TRUE((*my_it).first == (*orig_it).first);
+    EXPECT_TRUE((*my_it).second == (*orig_it).second);
+  }
+
+  auto pr1 = my_map.insert_or_assign(1, 'b');
+  auto i = orig_map.begin();
+  EXPECT_TRUE((*pr1.first).first == (*i).first);
+  EXPECT_FALSE((*pr1.first).second == (*i).second);
+}
+
+TEST(map, MapErase) {
+  s21::map<int, char> my_map = {{1, 'x'}, {2, 'b'}, {3, 'z'}, {4, 'y'}};
+  std::map<int, char> orig_map = {{1, 'x'}, {2, 'b'}, {3, 'z'}, {4, 'y'}};
+  EXPECT_EQ(my_map.size(), orig_map.size());
+  my_map.erase(my_map.begin());
+  orig_map.erase(orig_map.begin());
+  EXPECT_EQ(my_map.size(), orig_map.size());
+  auto my_it = my_map.begin();
+  auto orig_it = orig_map.begin();
+  for (; my_it != my_map.end(); ++my_it, ++orig_it) {
+    EXPECT_TRUE((*my_it).first == (*orig_it).first);
+    EXPECT_TRUE((*my_it).second == (*orig_it).second);
+  }
+}
+
+TEST(map, SwapMap) {
+  s21::map<int, int> my_map = {{1, 1}};
+  s21::map<int, int> my_swap_map = {{3, 3}, {4, 4}};
+
+  my_map.swap(my_swap_map);
+  EXPECT_EQ(my_map.size(), 2);
+  EXPECT_EQ(my_swap_map.size(), 1);
+  auto x = (*(my_map.begin())).first;
+  auto y = (*(my_swap_map.begin())).first;
+  EXPECT_EQ(x, 3);
+  EXPECT_EQ(y, 1);
+}
+
+TEST(map, MergeMap) {
+  s21::map<int, int> my_map = {{1, 1}, {4, 4}, {2, 2}};
+  s21::map<int, int> my_map_added = {{3, 3}, {4, 4}};
+
+  std::map<int, int> orig_map = {{1, 1}, {4, 4}, {2, 2}};
+  std::map<int, int> orig_map_added = {{3, 3}, {4, 4}};
+
+  my_map.merge(my_map_added);
+  orig_map.merge(orig_map_added);
+
+  auto my_it = my_map.begin();
+  auto orig_it = orig_map.begin();
+  for (; my_it != my_map.end(); ++my_it, ++orig_it) {
+    EXPECT_TRUE((*my_it).first == (*orig_it).first);
+    EXPECT_TRUE((*my_it).second == (*orig_it).second);
+  }
+
+  EXPECT_FALSE(my_map_added.contains(4));
+  EXPECT_FALSE(my_map_added.contains(3));
+  EXPECT_TRUE(my_map.contains(4));
+  EXPECT_TRUE(my_map.contains(3));
 }
 
 int main(int argc, char** argv) {

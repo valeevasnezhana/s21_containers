@@ -9,17 +9,17 @@ template <class Key, class Compare = std::less<Key>>
 class set {
  public:
   template <class T>
-  class SetConstIterator;
+  class ConstAVLIterator;
   template <class T>
-  class SetIterator;
+  class AVLIterator;
 
   using key_type = Key;
   using value_type = Key;
   using reference = value_type&;
   using const_reference = const value_type&;
   using size_type = size_t;
-  using const_iterator = SetConstIterator<value_type>;
-  using iterator = SetIterator<value_type>;
+  using const_iterator = ConstAVLIterator<value_type>;
+  using iterator = AVLIterator<value_type>;
 
  private:
   struct AVLNode {
@@ -30,20 +30,26 @@ class set {
     AVLNode* parent;
 
     explicit AVLNode(const value_type& val)
-        : value(val),
-          height(1),
-          left(nullptr),
-          right(nullptr),
-          parent(nullptr) {}
+        : value{val},
+          height{1},
+          left{nullptr},
+          right{nullptr},
+          parent{nullptr} {
+      ;
+    }
   };
 
  public:
   template <class T>
-  class SetIterator {
+  class AVLIterator {
    public:
-    explicit SetIterator<T>(AVLNode* node)
+    using value_type = T;
+    using reference = value_type&;
+    using iterator = AVLIterator<value_type>;
+
+    explicit AVLIterator<T>(AVLNode* node)
         : current_(node), root_for_iterator_(nullptr) {}
-    SetIterator<T>(AVLNode* node, AVLNode* root)
+    AVLIterator<T>(AVLNode* node, AVLNode* root)
         : current_(node), root_for_iterator_(root) {}
 
     reference operator*() { return current_->value; }
@@ -105,11 +111,15 @@ class set {
   };
 
   template <class T>
-  class SetConstIterator {
+  class ConstAVLIterator {
    public:
-    explicit SetConstIterator<T>(const AVLNode* node)
+    using value_type = T;
+    using const_reference = const value_type&;
+    using const_iterator = ConstAVLIterator<value_type>;
+
+    explicit ConstAVLIterator<T>(const AVLNode* node)
         : root_for_iterator_(nullptr), current_(node) {}
-    SetConstIterator<T>(const AVLNode* node, const AVLNode* root)
+    ConstAVLIterator<T>(const AVLNode* node, const AVLNode* root)
         : current_(node), root_for_iterator_(root) {}
 
     const_reference operator*() const { return current_->value; }
@@ -226,7 +236,7 @@ class set {
     size_ = 0;
   }
 
-  std::pair<iterator, bool> insert(const value_type& value) {
+  std::pair<iterator, bool> insert(const_reference value) {
     AVLNode* existing = FindNode_(value);
     if (existing != nullptr) {
       return std::make_pair(iterator(existing), false);
@@ -264,7 +274,7 @@ class set {
 
   iterator find(const Key& key) { return iterator(FindNode_(key)); }
 
-  bool contains(const Key& key) {
+  bool contains(const Key& key) const {
     AVLNode* current = root_;
 
     while (current != nullptr) {
