@@ -1693,15 +1693,15 @@ TEST(set, ConstructorMove) {
 TEST(set, OperatorsPlusTest) {
   SetTest tmp;
   s21::set<int>::iterator it(tmp.set_int.begin());
-  EXPECT_TRUE(*(it) == -12);
-  EXPECT_TRUE(*(++it) == -10);
+  EXPECT_EQ(*(it), -12);
+  EXPECT_EQ(*(++it), -10);
 }
 
 TEST(set, OperatorsMinusTest) {
   SetTest tmp;
   s21::set<int>::iterator it(tmp.set_int.find(7));
-  EXPECT_TRUE(*(it) == 7);
-  EXPECT_TRUE(*(--it) == 6);
+  EXPECT_EQ(*(it), 7);
+  EXPECT_EQ(*(--it), 6);
   s21::set<int>::iterator it2 = --(tmp.set_int.end());
   EXPECT_EQ(*(it2), 7);
   EXPECT_EQ(*(--it2), 6);
@@ -1822,12 +1822,6 @@ TEST(map, ConstructorInitializer2Map) {
   s21::map<int, char> my_map = {};
   std::map<int, char> orig_map = {};
   EXPECT_EQ(my_map.size(), orig_map.size());
-  auto my_it = my_map.begin();
-  auto orig_it = orig_map.begin();
-  for (; my_it != my_map.end(); ++my_it, ++orig_it) {
-    EXPECT_TRUE((*my_it).first == (*orig_it).first);
-    EXPECT_TRUE((*my_it).second == (*orig_it).second);
-  }
 }
 
 TEST(map, ConstructorCopyMap) {
@@ -1867,6 +1861,8 @@ TEST(map, MapOperator) {
   my_map['a'] = "Alisa";
   orig_map['a'] = "Alisa";
   orig_map['b'] = "Ben";
+  auto x = my_map['s'];
+  EXPECT_EQ(x, "");
   EXPECT_TRUE(my_map['a'] == orig_map['a']);
   EXPECT_FALSE(my_map['b'] == orig_map['b']);
   EXPECT_TRUE(my_map['c'] == orig_map['c']);
@@ -1980,6 +1976,8 @@ TEST(map, MapInsert3) {
   auto i = orig_map.begin();
   EXPECT_TRUE((*pr1.first).first == (*i).first);
   EXPECT_FALSE((*pr1.first).second == (*i).second);
+  my_map.insert_or_assign(4, 's');
+  EXPECT_TRUE(my_map.contains(4));
 }
 
 TEST(map, MapErase) {
@@ -2031,6 +2029,179 @@ TEST(map, MergeMap) {
   EXPECT_FALSE(my_map_added.contains(3));
   EXPECT_TRUE(my_map.contains(4));
   EXPECT_TRUE(my_map.contains(3));
+}
+
+TEST(multiset, DefaultConstructor) {
+  s21::multiset<int> defaultSet;
+
+  EXPECT_EQ(defaultSet.size(), 0);
+}
+
+TEST(multiset, RangeConstructor) {
+  s21::multiset<int> rangeSet{5, 10, 5, 7};
+  EXPECT_EQ(rangeSet.size(), 4);
+  EXPECT_EQ(rangeSet.count(5), 2);
+  EXPECT_EQ(rangeSet.count(10), 1);
+  EXPECT_EQ(rangeSet.count(7), 1);
+}
+
+TEST(multiset, CopyConstructor) {
+  s21::multiset<int> originalSet{5, 10, 5, 7};
+  s21::multiset<int> copySet(originalSet);
+
+  EXPECT_EQ(copySet.size(), 4);
+  EXPECT_EQ(*originalSet.begin(), *copySet.begin());
+}
+
+TEST(multiset, MoveConstructor) {
+  s21::multiset<int> originalSet{5, 10, 5, 7};
+  s21::multiset<int> movedSet(std::move(originalSet));
+
+  EXPECT_EQ(movedSet.size(), 4);
+  EXPECT_TRUE(originalSet.empty());
+}
+
+TEST(multiset, MoveAssignmentOperator) {
+  s21::multiset<int> originalSet{5, 10, 5, 7};
+  s21::multiset<int> movedSet;
+
+  movedSet = std::move(originalSet);
+
+  EXPECT_EQ(movedSet.size(), 4);
+  EXPECT_EQ(originalSet.size(), 0);
+}
+
+TEST(multiset, EmptyMethodOnEmptySet) {
+  s21::multiset<int> emptySet;
+
+  EXPECT_TRUE(emptySet.empty());
+}
+
+TEST(multiset, EmptyMethodOnNonEmptySet) {
+  s21::multiset<int> nonEmptySet{5, 10, 5, 7};
+
+  EXPECT_FALSE(nonEmptySet.empty());
+}
+
+TEST(multiset, InsertReturnValue) {
+  s21::multiset<int> testSet;
+
+  auto it1 = testSet.insert(5);
+  EXPECT_EQ(*it1, 5);
+
+  auto it2 = testSet.insert(10);
+  EXPECT_EQ(*it2, 10);
+
+  auto it3 = testSet.insert(5);
+  EXPECT_EQ(*it3, 5);
+
+  EXPECT_EQ(testSet.size(), 3);
+}
+
+TEST(multiset, EraseMethod) {
+  s21::multiset<int> testSet{5, 10, 5, 7};
+
+  auto it = testSet.begin();
+  ++it;
+
+  testSet.erase(it);
+
+  EXPECT_EQ(testSet.size(), 3);
+  EXPECT_EQ(testSet.count(10), 1);
+}
+
+TEST(multiset, SwapMethod) {
+  s21::multiset<int> set1{5, 10, 5, 7};
+  s21::multiset<int> set2{3, 8, 3};
+
+  set1.swap(set2);
+
+  EXPECT_EQ(set1.size(), 3);
+  EXPECT_EQ(set1.count(3), 2);
+  EXPECT_EQ(set1.count(8), 1);
+
+  EXPECT_EQ(set2.size(), 4);
+  EXPECT_EQ(set2.count(5), 2);
+  EXPECT_EQ(set2.count(7), 1);
+  EXPECT_EQ(set2.count(10), 1);
+}
+
+TEST(multiset, MergeMethod) {
+  s21::multiset<int> set1{5, 10, 5, 7};
+  s21::multiset<int> set2{3, 8, 3};
+
+  set1.merge(set2);
+
+  EXPECT_EQ(set1.size(), 7);
+  EXPECT_EQ(set1.count(3), 2);
+  EXPECT_EQ(set1.count(5), 2);
+  EXPECT_EQ(set1.count(7), 1);
+  EXPECT_EQ(set1.count(8), 1);
+  EXPECT_EQ(set1.count(10), 1);
+
+  EXPECT_EQ(set2.size(), 0);
+}
+
+TEST(multiset, FindMethod) {
+  s21::multiset<int> testSet{5, 10, 5, 7};
+
+  auto it1 = testSet.find(5);
+  EXPECT_EQ(*it1, 5);
+
+  auto it2 = testSet.find(10);
+  EXPECT_EQ(*it2, 10);
+
+  auto it3 = testSet.find(15);
+  EXPECT_EQ(it3, testSet.end());
+}
+
+TEST(multiset, ContainsMethod) {
+  s21::multiset<int> testSet{5, 10, 5, 7};
+
+  EXPECT_TRUE(testSet.contains(5));
+  EXPECT_TRUE(testSet.contains(10));
+  EXPECT_FALSE(testSet.contains(15));
+}
+
+TEST(multiset, EqualRangeMethod) {
+  s21::multiset<int> testSet{5, 5, 15, 5, 25};
+
+  auto [it1, it2] = testSet.equal_range(15);
+  EXPECT_EQ(*it1, 15);
+  EXPECT_EQ(*it2, 25);
+
+  auto [it3, it4] = testSet.equal_range(5);
+  EXPECT_EQ(*it3, 5);
+  EXPECT_EQ(*(++it3), 5);
+  EXPECT_EQ(*(++it3), 5);
+  EXPECT_EQ(++it3, it4);
+  EXPECT_EQ(*it4, 15);
+}
+
+TEST(multiset, LowerBoundMethod) {
+  s21::multiset<int> testSet{5, 10, 15, 20, 25};
+
+  auto it1 = testSet.lower_bound(10);
+  EXPECT_EQ(*it1, 10);
+
+  auto it2 = testSet.lower_bound(17);
+  EXPECT_EQ(*it2, 20);
+
+  auto it3 = testSet.lower_bound(30);
+  EXPECT_TRUE(it3 == testSet.end());
+}
+
+TEST(MultiSetTest, UpperBoundMethod) {
+  s21::multiset<int> testSet{5, 10, 15, 20, 25};
+
+  auto it1 = testSet.upper_bound(10);
+  EXPECT_EQ(*it1, 15);
+
+  auto it2 = testSet.upper_bound(17);
+  EXPECT_EQ(*it2, 20);
+
+  auto it3 = testSet.upper_bound(25);
+  EXPECT_EQ(it3, testSet.end());
 }
 
 int main(int argc, char** argv) {

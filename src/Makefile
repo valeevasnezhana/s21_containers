@@ -26,7 +26,7 @@ style:
 	@clang-format -style=Google -n *.h tests/*.cc
 
 googlestyle:
-	python2 cpplint.py *.h
+	python2 cpplint.py *.h test/*.cc
 
 cxxcheck:
 	cppcheck --enable=all --suppress=missingIncludeSystem --language=c++ --std=c++17 *.h

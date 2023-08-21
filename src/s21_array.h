@@ -91,4 +91,4 @@ class array {
 };
 }  // namespace s21
 
-#endif  //CPP2_S21_CONTAINERS_SRC_S21_ARRAY_H
+#endif  // CPP2_S21_CONTAINERS_SRC_S21_ARRAY_H

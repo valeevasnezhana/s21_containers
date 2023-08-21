@@ -72,8 +72,8 @@ class map {
   size_type size() const { return data_.size(); }
   size_type max_size() const { return data_.max_size(); }
 
-  iterator begin() { return data_.begin(); }
-  iterator end() { return data_.end(); }
+  iterator begin() const { return data_.begin(); }
+  iterator end() const { return data_.end(); }
 
   std::pair<iterator, bool> insert(const key_type &key,
                                    const mapped_type &mapped) {
@@ -121,6 +121,18 @@ class map {
 
   bool contains(const key_type &key) const {
     return data_.contains(SetValueType_(key, mapped_type()));
+  }
+
+  iterator find(const Key &key) const {
+    return data_.find(SetValueType_(key, mapped_type()));
+  }
+
+  iterator upper_bound(const Key &key) const {
+    return data_.upper_bound(SetValueType_(key, mapped_type()));
+  }
+
+  iterator lower_bound(const Key &key) const {
+    return data_.lower_bound(SetValueType_(key, mapped_type()));
   }
 
   void clear() { data_.clear(); }

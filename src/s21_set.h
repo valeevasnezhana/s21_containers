@@ -213,13 +213,9 @@ class set {
     return *this;
   }
 
-  iterator begin() { return iterator(FindMin_(root_)); }
+  iterator begin() const { return iterator(FindMin_(root_)); }
 
-  iterator end() { return iterator(nullptr, root_); }
-
-  const_iterator begin() const { return const_iterator(FindMin_(root_)); }
-
-  const_iterator end() const { return const_iterator(nullptr); }
+  iterator end() const { return iterator(nullptr, root_); }
 
   bool empty() const { return size_ == 0; }
 
@@ -272,7 +268,7 @@ class set {
     }
   }
 
-  iterator find(const Key& key) { return iterator(FindNode_(key)); }
+  iterator find(const Key& key) const { return iterator(FindNode_(key)); }
 
   bool contains(const Key& key) const {
     AVLNode* current = root_;
@@ -289,11 +285,43 @@ class set {
     return false;
   }
 
+  iterator lower_bound(const Key& key) const {
+    AVLNode* current = root_;
+    AVLNode* lower = nullptr;
+
+    while (current != nullptr) {
+      if (Compare{}(current->value, key)) {
+        current = current->right;
+      } else {
+        lower = current;
+        current = current->left;
+      }
+    }
+
+    return iterator(lower);
+  }
+
+  iterator upper_bound(const Key& key) const {
+    AVLNode* current = root_;
+    AVLNode* upper = nullptr;
+
+    while (current != nullptr) {
+      if (Compare{}(key, current->value)) {
+        upper = current;
+        current = current->left;
+      } else {
+        current = current->right;
+      }
+    }
+
+    return iterator(upper);
+  }
+
  private:
   AVLNode* root_;
   size_type size_;
 
-  int GetHeight_(AVLNode* node) {
+  int GetHeight_(AVLNode* node) const {
     if (node == nullptr) {
       return 0;
     }
@@ -307,7 +335,7 @@ class set {
         (left_height > right_height ? left_height : right_height) + 1;
   }
 
-  int GetBalance_(AVLNode* node) {
+  int GetBalance_(AVLNode* node) const {
     if (node == nullptr) {
       return 0;
     }
@@ -420,7 +448,7 @@ class set {
     }
   }
 
-  AVLNode* FindNode_(const value_type& value) {
+  AVLNode* FindNode_(const value_type& value) const {
     AVLNode* current = root_;
 
     while (current != nullptr) {
