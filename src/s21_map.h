@@ -34,8 +34,8 @@ class map {
   };
 
   struct InMapCompare_ {
-    constexpr bool operator()(const MyPair_<key_type, mapped_type> &lhs,
-                              const MyPair_<key_type, mapped_type> &rhs) const {
+    bool operator()(const MyPair_<key_type, mapped_type> &lhs,
+                    const MyPair_<key_type, mapped_type> &rhs) const {
       return Compare{}(lhs.first, rhs.first);
     }
   };

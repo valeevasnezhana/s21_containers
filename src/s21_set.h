@@ -442,7 +442,7 @@ class set {
         delete temp;
       } else {
         AVLNode* temp = FindMin_(node->right);
-        node->value = temp->value;
+        std::swap(node->value, temp->value);
         node->right = RemoveNode_(node->right, temp->value);
       }
     }
