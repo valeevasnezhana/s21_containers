@@ -15,21 +15,10 @@ test_asan: clean
 	${CXX} ${FLAGS} ${SANITIZE} ${TARGETS} ${GTEST} -o test_asan
 	./test_asan
 	
-
 gcov_report: test
 	mkdir report
 	gcovr --html-details -o report/coverage.html
 	open ./report/coverage.html
-
-style:
-	@clang-format -style=Google -i *.h tests/*.cc
-	@clang-format -style=Google -n *.h tests/*.cc
-
-googlestyle:
-	python2 cpplint.py *.h test/*.cc
-
-cxxcheck:
-	cppcheck --enable=all --suppress=missingIncludeSystem --language=c++ --std=c++17 *.h
 
 clean:
 	rm -rf *.o *.out *.gch *.dSYM *.gcov *.gcda *.gcno *.a *.css *.html *.info test test_asan report

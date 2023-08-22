@@ -1,7 +1,4 @@
-//
-// Created by Tandra Ymir on 7/24/23.
-//
-
+// Copyright 2023 School21 @tandraym
 #ifndef CPP2_S21_CONTAINERS_SRC_S21_VECTOR_H_
 #define CPP2_S21_CONTAINERS_SRC_S21_VECTOR_H_
 

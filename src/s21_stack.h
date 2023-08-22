@@ -1,9 +1,6 @@
-//
-// Created by Tandra Ymir on 8/1/23.
-//
-
-#ifndef CPP2_S21_CONTAINERS_SRC_S21_STACK_H
-#define CPP2_S21_CONTAINERS_SRC_S21_STACK_H
+// Copyright 2023 School21 @tandraym
+#ifndef CPP2_S21_CONTAINERS_SRC_S21_STACK_H_
+#define CPP2_S21_CONTAINERS_SRC_S21_STACK_H_
 
 #include "s21_list.h"
 
@@ -56,4 +53,4 @@ class stack {
   s21::list<T> head_;
 };
 }  // namespace s21
-#endif  // CPP2_S21_CONTAINERS_SRC_S21_STACK_H
+#endif  // CPP2_S21_CONTAINERS_SRC_S21_STACK_H_

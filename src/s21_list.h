@@ -1,7 +1,4 @@
-//
-// Created by Tandra Ymir on 7/27/23.
-//
-
+// Copyright 2023 School21 @tandraym
 #ifndef CPP2_S21_CONTAINERS_SRC_S21_LIST_H_
 #define CPP2_S21_CONTAINERS_SRC_S21_LIST_H_
 

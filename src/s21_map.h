@@ -1,6 +1,6 @@
 // Copyright 2023 School21 @gruntmet Snezhana Valeeva
-#ifndef CPP2_S21_CONTAINERS_SRC_S21_MAP_H
-#define CPP2_S21_CONTAINERS_SRC_S21_MAP_H
+#ifndef CPP2_S21_CONTAINERS_SRC_S21_MAP_H_
+#define CPP2_S21_CONTAINERS_SRC_S21_MAP_H_
 
 #include <functional>
 #include <initializer_list>
@@ -153,4 +153,4 @@ class map {
 };
 }  // namespace s21
 
-#endif  // CPP2_S21_CONTAINERS_SRC_S21_MAP_H
+#endif  // CPP2_S21_CONTAINERS_SRC_S21_MAP_H_

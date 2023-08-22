@@ -1,6 +1,6 @@
 // Copyright 2023 School21 @gruntmet Snezhana Valeeva
-#ifndef CPP2_S21_CONTAINERS_SRC_S21_MULTISET_H
-#define CPP2_S21_CONTAINERS_SRC_S21_MULTISET_H
+#ifndef CPP2_S21_CONTAINERS_SRC_S21_MULTISET_H_
+#define CPP2_S21_CONTAINERS_SRC_S21_MULTISET_H_
 
 #include <utility>
 
@@ -236,4 +236,4 @@ class multiset {
 
 }  // namespace s21
 
-#endif  // CPP2_S21_CONTAINERS_SRC_S21_MULTISET_H
+#endif  // CPP2_S21_CONTAINERS_SRC_S21_MULTISET_H_

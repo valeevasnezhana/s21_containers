@@ -1,11 +1,8 @@
-//
-// Created by Tandra Ymir on 8/2/23.
-//
-
-#ifndef CONTAINERS_S21_CONTAINERSPLUS_H
-#define CONTAINERS_S21_CONTAINERSPLUS_H
+// Copyright 2023 School21 @tandraym
+#ifndef CPP2_S21_CONTAINERS_SRC_S21_CONTAINERSPLUS_H_
+#define CPP2_S21_CONTAINERS_SRC_S21_CONTAINERSPLUS_H_
 
 #include "s21_array.h"
 #include "s21_multiset.h"
 
-#endif  // CONTAINERS_S21_CONTAINERSPLUS_H
+#endif  // CPP2_S21_CONTAINERS_SRC_S21_CONTAINERSPLUS_H_

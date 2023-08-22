@@ -1,9 +1,6 @@
-//
-// Created by Tandra Ymir on 8/2/23.
-//
-
-#ifndef CPP2_S21_CONTAINERS_SRC_S21_ARRAY_H
-#define CPP2_S21_CONTAINERS_SRC_S21_ARRAY_H
+// Copyright 2023 School21 @tandraym
+#ifndef CPP2_S21_CONTAINERS_SRC_S21_ARRAY_H_
+#define CPP2_S21_CONTAINERS_SRC_S21_ARRAY_H_
 
 #include <iostream>
 #include <limits>
@@ -91,4 +88,4 @@ class array {
 };
 }  // namespace s21
 
-#endif  // CPP2_S21_CONTAINERS_SRC_S21_ARRAY_H
+#endif  // CPP2_S21_CONTAINERS_SRC_S21_ARRAY_H_
