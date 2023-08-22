@@ -8,6 +8,22 @@
 namespace s21 {
 
 template <class Key, class Compare = std::less<Key>>
+class set;
+
+template <class Key, class Compare = std::less<Key>>
+struct AVLNode {
+  Key value;
+  int height;
+  AVLNode* left;
+  AVLNode* right;
+  AVLNode* parent;
+
+  explicit AVLNode(const Key& val)
+      : value{val}, height{1}, left{nullptr}, right{nullptr}, parent{nullptr} {}
+  friend class set<Key, Compare>;
+};
+
+template <class Key, class Compare>
 class set {
  public:
   template <class T>
@@ -22,24 +38,8 @@ class set {
   using size_type = size_t;
   using const_iterator = ConstAVLIterator<value_type>;
   using iterator = AVLIterator<value_type>;
+  using AVLNode = AVLNode<Key, Compare>;
 
- private:
-  struct AVLNode {
-    value_type value;
-    int height;
-    AVLNode* left;
-    AVLNode* right;
-    AVLNode* parent;
-
-    explicit AVLNode(const value_type& val)
-        : value{val},
-          height{1},
-          left{nullptr},
-          right{nullptr},
-          parent{nullptr} {}
-  };
-
- public:
   template <class T>
   class AVLIterator {
    public:
@@ -256,7 +256,7 @@ class set {
 
     auto new_node = new AVLNode(value);
     root_ = InsertNode_(root_, new_node);
-    size_++;
+    ++size_;
 
     return std::make_pair(iterator(new_node), true);
   }
@@ -267,7 +267,7 @@ class set {
       return;
     }
     root_ = RemoveNode_(root_, node->value);
-    size_--;
+    --size_;
   }
 
   void swap(set& other) {

@@ -47,7 +47,7 @@ class map {
   using iterator = typename SetTemplate_::iterator;
   using const_iterator = typename SetTemplate_::const_iterator;
 
-  map() { data_ = SetTemplate_(); }
+  map() : data_{} { ; }
 
   map(std::initializer_list<value_type> const &items) {
     for (const value_type &item : items) {

@@ -170,14 +170,14 @@ class multiset {
     } else {
       it = (counter_.insert({value, 1})).first;
     }
-    size_++;
+    ++size_;
     return iterator(it, (*it).second);
   }
 
   void erase(iterator pos) {
     auto it = pos.iter;
     if (it != counter_.end()) {
-      size_--;
+      --size_;
       if ((*it).second > 1) {
         --(*(it)).second;
       } else {
