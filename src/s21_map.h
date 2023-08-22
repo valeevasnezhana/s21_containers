@@ -63,6 +63,11 @@ class map {
     return *this;
   }
 
+  map &operator=(const map &other) {
+    data_ = other.data_;
+    return *this;
+  }
+
   ~map() { data_.clear(); }
 
   void swap(map &other) { std::swap(*this, other); }
@@ -72,8 +77,10 @@ class map {
   size_type size() const { return data_.size(); }
   size_type max_size() const { return data_.max_size(); }
 
-  iterator begin() const { return data_.begin(); }
-  iterator end() const { return data_.end(); }
+  iterator begin() noexcept { return data_.begin(); }
+  iterator end() noexcept { return data_.end(); }
+  const_iterator begin() const noexcept { return data_.begin(); }
+  const_iterator end() const noexcept { return data_.end(); }
 
   std::pair<iterator, bool> insert(const key_type &key,
                                    const mapped_type &mapped) {
@@ -123,7 +130,11 @@ class map {
     return data_.contains(SetValueType_(key, mapped_type()));
   }
 
-  iterator find(const Key &key) const {
+  iterator find(const Key &key) {
+    return data_.find(SetValueType_(key, mapped_type()));
+  }
+
+  const_iterator find(const Key &key) const {
     return data_.find(SetValueType_(key, mapped_type()));
   }
 

@@ -1690,6 +1690,26 @@ TEST(set, ConstructorMove) {
   EXPECT_TRUE(!two.empty());
 }
 
+TEST(set, CopyAssignmentOperator) {
+  s21::set<int> originalSet{5, 10, 1, 7};
+  s21::set<int> assignedSet;
+
+  assignedSet = originalSet;
+
+  EXPECT_EQ(assignedSet.size(), 4);
+  EXPECT_EQ(*assignedSet.begin(), *originalSet.begin());
+}
+
+TEST(set, MoveAssignmentOperator) {
+  s21::set<int> originalSet{1, 10, 5, 7};
+  s21::set<int> movedSet;
+
+  movedSet = std::move(originalSet);
+
+  EXPECT_EQ(movedSet.size(), 4);
+  EXPECT_TRUE(originalSet.empty());
+}
+
 TEST(set, OperatorsPlusTest) {
   SetTest tmp;
   s21::set<int>::iterator it(tmp.set_int.begin());
@@ -1851,6 +1871,27 @@ TEST(map, ConstructorMoveMap) {
     EXPECT_TRUE((*my_it).first == (*orig_it).first);
     EXPECT_TRUE((*my_it).second == (*orig_it).second);
   }
+}
+
+TEST(map, CopyAssignmentOperator) {
+  s21::map<int, char> originalMap{{5, 'a'}, {10, 'b'}, {1, 'a'}, {7, 'f'}};
+  s21::map<int, char> assignedMap;
+
+  assignedMap = originalMap;
+
+  EXPECT_EQ(assignedMap.size(), 4);
+  EXPECT_EQ((*assignedMap.begin()).first, (*originalMap.begin()).first);
+  EXPECT_EQ((*assignedMap.begin()).second, (*originalMap.begin()).second);
+}
+
+TEST(map, MoveAssignmentOperator) {
+  s21::map<int, char> originalMap{{5, 'a'}, {10, 'b'}, {1, 'a'}, {7, 'f'}};
+  s21::map<int, char> movedMap;
+
+  movedMap = std::move(originalMap);
+
+  EXPECT_EQ(movedMap.size(), 4);
+  EXPECT_TRUE(originalMap.empty());
 }
 
 TEST(map, MapOperator) {
@@ -2061,6 +2102,16 @@ TEST(multiset, MoveConstructor) {
   EXPECT_TRUE(originalSet.empty());
 }
 
+TEST(multiset, CopyAssignmentOperator) {
+  s21::multiset<int> originalSet{5, 10, 5, 7};
+  s21::multiset<int> assignedSet;
+
+  assignedSet = originalSet;
+
+  EXPECT_EQ(assignedSet.size(), 4);
+  EXPECT_EQ(*assignedSet.begin(), *originalSet.begin());
+}
+
 TEST(multiset, MoveAssignmentOperator) {
   s21::multiset<int> originalSet{5, 10, 5, 7};
   s21::multiset<int> movedSet;
@@ -2068,7 +2119,7 @@ TEST(multiset, MoveAssignmentOperator) {
   movedSet = std::move(originalSet);
 
   EXPECT_EQ(movedSet.size(), 4);
-  EXPECT_EQ(originalSet.size(), 0);
+  EXPECT_TRUE(originalSet.empty());
 }
 
 TEST(multiset, EmptyMethodOnEmptySet) {
@@ -2191,7 +2242,7 @@ TEST(multiset, LowerBoundMethod) {
   EXPECT_TRUE(it3 == testSet.end());
 }
 
-TEST(MultiSetTest, UpperBoundMethod) {
+TEST(multiset, UpperBoundMethod) {
   s21::multiset<int> testSet{5, 10, 15, 20, 25};
 
   auto it1 = testSet.upper_bound(10);

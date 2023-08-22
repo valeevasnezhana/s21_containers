@@ -118,7 +118,7 @@ class set {
     using const_iterator = ConstAVLIterator<value_type>;
 
     explicit ConstAVLIterator<T>(const AVLNode* node)
-        : root_for_iterator_(nullptr), current_(node) {}
+        : current_(node), root_for_iterator_(nullptr) {}
     ConstAVLIterator<T>(const AVLNode* node, const AVLNode* root)
         : current_(node), root_for_iterator_(root) {}
 
@@ -163,8 +163,8 @@ class set {
     }
 
    private:
-    const AVLNode* root_for_iterator_;
     const AVLNode* current_;
+    const AVLNode* root_for_iterator_;
 
     const AVLNode* FindMin_(const AVLNode* node) const {
       while (node->left != nullptr) {
@@ -204,7 +204,7 @@ class set {
 
   set& operator=(set&& s) noexcept {
     if (this != &s) {
-      RemoveTree_(root_);
+      clear();
       root_ = s.root_;
       size_ = s.size_;
       s.root_ = nullptr;
@@ -213,9 +213,25 @@ class set {
     return *this;
   }
 
-  iterator begin() const { return iterator(FindMin_(root_)); }
+  set& operator=(const set& s) {
+    if (this != &s) {
+      clear();
+      for (const value_type& item : s) {
+        insert(item);
+      }
+    }
+    return *this;
+  }
 
-  iterator end() const { return iterator(nullptr, root_); }
+  iterator begin() noexcept { return iterator(FindMin_(root_)); }
+
+  iterator end() noexcept { return iterator(nullptr, root_); }
+
+  const_iterator begin() const noexcept {
+    return const_iterator(FindMin_(root_));
+  }
+
+  const_iterator end() const noexcept { return const_iterator(nullptr, root_); }
 
   bool empty() const { return size_ == 0; }
 
@@ -268,7 +284,10 @@ class set {
     }
   }
 
-  iterator find(const Key& key) const { return iterator(FindNode_(key)); }
+  iterator find(const Key& key) { return iterator(FindNode_(key)); }
+  const_iterator find(const Key& key) const {
+    return const_iterator(FindNode_(key));
+  }
 
   bool contains(const Key& key) const {
     AVLNode* current = root_;
