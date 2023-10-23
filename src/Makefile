@@ -22,4 +22,4 @@ gcov_report: test
 
 clean:
 	rm -rf *.o *.out *.gch *.dSYM *.gcov *.gcda *.gcno *.a *.css *.html *.info test test_asan report
-.PHONY: test test_asan clean gcov_report style cxxcheck googlestyle
+.PHONY: test test_asan clean gcov_report
